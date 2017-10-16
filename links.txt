@@ -1,0 +1,6 @@
+https://hannover.ccc.de/~nexus/dbwifi/index.html
+https://motherboard.vice.com/de/article/j5qaad/hacker-entdeckt-erneut-sicherheitslucke-im-wlan-der-deutschen-bahn
+https://www.golem.de/news/wifionice-bahn-schliesst-vermeintliche-sicherheitsluecke-in-neuem-wlan-1610-123820.html
+https://www.heise.de/newsticker/meldung/Bahn-startet-Ausstattung-der-ICE-mit-neuem-WLAN-3327235.html
+https://netzpolitik.org/2017/chaos-computer-club-sicherheitsluecke-im-ice-wlan-besteht-weiterhin/
+https://netzpolitik.org/2016/datenschutz-im-zug-deutsche-bahn-will-sicherheitsluecke-in-neuem-ice-wlan-schliessen/
