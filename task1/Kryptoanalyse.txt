@@ -1,0 +1,43 @@
+Übungsblatt 1: Kryptoanalyse Klassischer Cipher
+
+Aufgabe 2)
+
+A: 100€ Kosten pro Einheit aus (50€ pro ASIC und 50€ pro Integration).
+Demnach können 10000 Einheiten parallel betrieben werden.
+
+
+B:
+Minimale Suchzeit: 0,0000000000002 sek
+5000000000000000 pro sek
+
+40-bit , bedeutet 1099511627776 mögliche  Schlüssel. Bei der angegebenen Suchzeit werden 2199 parallele Einheiten benötigt mit einer Zeit von 1 Sekunde.
+
+56-bit , 72057594037927936 Möglichkeiten,
+10000 Einheiten parallel benötigen
+max = 14411,518 sek
+Ø = 7205,759 sek
+
+64-bit , 18446744073709551616 Möglichkeiten,
+10000 Einheiten parallel benötigen
+max = 3689348 sek = 1025 h
+Ø = 1844674 sek = 512 h
+
+
+112-bit = 5192296858534827628530496329220096 Möglichkeiten, benötigen 32929330660418 Jahre
+max = 3,292932E13 Jahre
+Ø = 1,646467E13 Jahre
+
+
+128-bit = 340282366920938463463374607431768211456 Möglichkeiten, benötigen 2158056614161202837 Jahre
+max = 2,158057E18 Jahre
+Ø = 1,079028E18 Jahre
+
+
+C:
+112-bit
+Rund 29,5 Jahre
+
+128-bit
+Rund 40,5 Jahre
+
+
