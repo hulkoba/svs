@@ -4,8 +4,7 @@ from collections import defaultdict
 
 from utils import *
 
-englishLetterFrequency = [' ','e','t','a','o','i','h','s','n','r','d','l','c','u','m','w','f','g','y','p','b','v','k','j','x','q','z']
-myFrequency =            [' ','e','t','a','o','h','i','s','n','l','r','d','u','f','m','c','g','w','y','b','p','v','k','x','z','q','j']
+englishLetterFrequency = [' ','e','t','a','o','i','n','s','h','r','d','l','c','u','m','w','f','g','y','p','b','v','k','j','x','q','z']
 
 oneLetterWords = ['a', 'i']
 twoLetterWords = ['he', 'at', 'it', 'if', 'in', 'is', 'on', 'to', 'do', 'go', 'of', 'an', 'so', 'of', 'up', 'as', 'my', 'me', 'be', 'as', 'or', 'we', 'by', 'no', 'am', 'us']

@@ -1,8 +1,10 @@
 import random, copy, string, sys, codecs, operator, re, collections
 from pprint import pprint
 
-inputFilename = "plaintext.txt"
-outputFilename = "ciphertext.txt"
+#inputFilename = "old_samples/plaintext.txt"
+inputFilename = "2017_samples/sample.txt"
+#outputFilename = "old_samples/ciphertext.txt"
+outputFilename = "2017_samples/sample.txt_enc.txt"
 
 LETTERS = 'abcdefghijklmnopqrstuvwxyz'
 
@@ -16,7 +18,6 @@ def getAlphabet():
   #abc = [chr(a+97) for a in range(26)]
   abc = list(string.ascii_lowercase)
   abc.append(' ')
-  print abc
   return abc
 
 def readFileToString(filename):
