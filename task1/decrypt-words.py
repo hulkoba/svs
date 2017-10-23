@@ -71,12 +71,46 @@ def decrypt1Word(cipher, dictionary):
   #words = getWords(cipher, dictionary)
   words = cipher.split(' ')
 
-  for word in words:
-    if len(word) == 1 and word in oneLetterWords:
-      matchDict[word] = dictionary[word]
+  letterCount = {}
 
-    plaintext += word+' '
+  for word in words:
+    if len(word) == 1:
+      if not word in letterCount:
+        letterCount[word] = 1
+      else:
+        letterCount[word] += 1
+
+  newLetterCount = sorted(letterCount.items())
+
+  for idx, letter in enumerate(newLetterCount):
+    print idx, letter
+    #newLetterCount.keys()[letter.idx]
+    matchDict[letter[0]] = oneLetterWords[idx]
+
+  #print matchDict
+  plaintext = cipher
+  print matchDict
+
+  for rule in matchDict.items():
+    #print rule
+    plaintext = plaintext.replace(rule[0], rule[1].upper())
+
   return plaintext
+
+def decryptHuman(cipher):
+  plaintext = ''
+
+  matchDict['i'] = 'i'
+  matchDict['e'] = 'e'
+
+  plaintext = cipher
+
+  for rule in matchDict.items():
+    #print rule
+    plaintext = plaintext.replace(rule[0], rule[1].upper())
+
+  return plaintext
+
 
 
 def decrypt(cipher, dictionary):
@@ -100,7 +134,6 @@ def decryptEnd(cipher, dictionary, matchDict):
     else:
       wordText += dictionary[letter]
 
-
   pprint(matchDict)
   pprint(dictionary)
   return wordText
@@ -112,12 +145,15 @@ cipherText = readFileToString(outputFilename)
 decryptedDict = createDict(cipherText)
 
 wordSeparatedText = decrypt(cipherText, decryptedDict)
-oneWordDecrypted = decrypt1Word(wordSeparatedText, decryptedDict)
-threeWordDecrypted = decrypt3Words(oneWordDecrypted, decryptedDict, matchDict)
-testWordDecrypted = decryptEnd(cipherText, decryptedDict, matchDict)
-#print "plaintext:", threeWordDecrypted
-print "plaintext:", wordSeparatedText
-print '----------------------------------------------------------------------------'
-print "plaintext:", testWordDecrypted
 
-writeStringToFile("decrypted-plaintext.txt", threeWordDecrypted)
+decryptHuman = decryptHuman(wordSeparatedText)
+oneWordDecrypted = decrypt1Word(decryptHuman, decryptedDict)
+#threeWordDecrypted = decrypt3Words(oneWordDecrypted, decryptedDict, matchDict)
+#testWordDecrypted = decryptEnd(cipherText, decryptedDict, matchDict)
+#print "plaintext:", threeWordDecrypted
+
+print 'beforetex:', wordSeparatedText
+print '----------------------------------------------------------------------------'
+print "plaintext:", oneWordDecrypted
+
+writeStringToFile("decrypted-plaintext.txt", oneWordDecrypted)
