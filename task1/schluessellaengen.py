@@ -1,21 +1,5 @@
 import math
 
-def secondsToDays(seconds):
-	return seconds / float(60 * 60 * 24)
-
-def secondsToHours(seconds):
-	return seconds / float(60 * 60)
-
-def secondsToWeeks(seconds):
-	return seconds / float(60 * 60 * 27 * 7)
-
-
-def printTime(seconds):
-	if secondsToDays(seconds) > 7:
-		return str(format(secondsToWeeks(seconds), '.0f')) + " Wochen"
-	else:
-		return str(format(secondsToHours(seconds), '.0f')) + " Stunden"
-
 keyLength = [40, 56, 64, 112, 128]
 
 #unit: keys per second
@@ -49,8 +33,8 @@ for length in keyLength:
 	maxSeconds = maxTries / float(keysPerSecond)
 	avgSeconds = avgTries / float(keysPerSecond)
 
-	print("Durchschnittlich " + str(avgTries) + " Versuche in " + printTime(avgSeconds))
-	print("Maximal " + str(maxTries) + " Versuche in " + printTime(maxSeconds))
+	print("Durchschnittlich " + str(avgTries) + " Versuche in " + avgSeconds)
+	print("Maximal " + str(maxTries) + " Versuche in " + maxSeconds)
 
 	print("\n")
 
