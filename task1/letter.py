@@ -2,12 +2,20 @@ import json
 
 class Letter:
 
-    def __init__(self, fromLetter):
+    def __init__(self, fromLetter, frequency):
         self.letter = fromLetter
         self.candidates = {'a': {}, 'b': {}, 'c': {}, 'd': {}, 'e': {}, 'f': {}, 'g': {}, 'h': {}, 'i': {}, 'j': {}, 'k': {},
       'l': {}, 'm': {}, 'n': {}, 'o': {}, 'p': {}, 'q': {}, 'r': {}, 's': {}, 't': {}, 'u': {}, 'v': {},
       'w': {}, 'x': {}, 'y': {}, 'z': {}}
+        self.candidatesProbability = {'a': 100, 'b': 100, 'c': 100, 'd': 100, 'e': 100, 'f': 100, 'g': 100, 'h': 100, 'i': 100, 'j': 100, 'k': 100,
+      'l': 100, 'm': 100, 'n': 100, 'o': 100, 'p': 100, 'q': 100, 'r': 100, 's': 100, 't': 100, 'u': 100, 'v': 100,
+      'w': 100, 'x': 100, 'y': 100, 'z': 100}
         self.solution = '_'
+        self.score = frequency
+        self.frequeny = 0
+
+    def set_frequency(self, frequency):
+        self.frequency = frequency
 
     # candidates is meant to be a list
     def set_candidates(self, toLetter, cands):
@@ -26,14 +34,23 @@ class Letter:
     def remove_candidates(self, cands):
     	for cand in cands:
            del self.candidates[cand]
+           self.candidatesProbability[cand] = 100
+
 
     # candidate is meant to be a string
-    def remove_candidates(self, candidate):
+    def remove_candidate(self, candidate):
         if candidate in self.candidates:
             del self.candidates[candidate]
+        #else:
+            #print("did not delete cand "+ candidate)
+        self.candidatesProbability[candidate] = 100
 
     def clean_candidates(self):
     	self.candidates = {}
+
+    def set_probability(self, toLetter, probability):
+        assert toLetter in self.candidatesProbability
+        self.candidatesProbability[toLetter] = probability
 
     # toLetter is meant to be a string
     # dependency is meant to be a dict
