@@ -12,7 +12,7 @@ class Letter:
       'w': 100, 'x': 100, 'y': 100, 'z': 100}
         self.solution = '_'
         self.score = frequency
-        self.frequeny = 0
+        self.frequency = 0
 
     def set_frequency(self, frequency):
         self.frequency = frequency
@@ -75,7 +75,7 @@ class Letter:
          self.solution = solution
 
     def validate_dependency(self, key, value):
-        if key in self.candidates and self.candidates[key] == value:
+        if key in self.candidates and value in self.candidates[key]:
             del self.candidates[key]
             assert len(self.candidates) > 0
 
@@ -83,4 +83,6 @@ class Letter:
         string = ""
         for cand in self.candidates:
             string += str(cand) + " (if "  + " ) "
-        return "Letter: ", self.letter, " is " , self.solution, "or could be ", json.dumps(self.candidates)
+        return "Letter: ", self.letter, " is " , self.solution, "or could be ", json.dumps(self.candidates) + " with probabilites " + json.dumps(self.candidatesProbability)
+
+
