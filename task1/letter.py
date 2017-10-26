@@ -39,7 +39,8 @@ class Letter:
 
     # candidate is meant to be a string
     def remove_candidate(self, candidate):
-        if candidate in self.candidates:
+        if candidate in self.candidates.keys():
+            print("deleted cand " + candidate)
             del self.candidates[candidate]
         #else:
             #print("did not delete cand "+ candidate)
