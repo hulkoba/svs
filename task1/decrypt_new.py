@@ -2,7 +2,7 @@ import random, re, string, collections, operator
 from pprint import pprint
 from collections import defaultdict
 import numpy as np
-#import enchant
+import enchant
 
 from utils import *
 from letter import Letter
@@ -51,11 +51,7 @@ cipherText = readFileToString(outputFilename)
 frequency = getLetterFrequency(cipherText)
 
 withWhitespaces = makewhitespace(cipherText, frequency[0][0])
-print withWhitespaces
-
 lettersTotal = len(withWhitespaces.replace(' ', ''))
-
-print "LETTERS=", lettersTotal
 
 freqDict = {}
 
@@ -65,27 +61,18 @@ for letter, score in frequency2:
     freqDict[letter] = (score / float(lettersTotal)) * 100
 
 del freqDict[' ']
-print freqDict
-
-# freqDict = dict(frequency)
-print frequency2
 
 letters = {}
 for letter in alphabet:
     newLetter = Letter(letter, freqDict[letter])
     for otherLetter in englishLetterPercentage.keys():
         prob = englishLetterPercentage[otherLetter]
-        # print letter, otherLetter, freqDict[letter], prob, abs(freqDict[letter] - prob)
         newLetter.set_probability(otherLetter, abs(freqDict[letter] - prob))
 
     newLetter.set_frequency(dict(frequency2)[letter])
     letters[letter] = newLetter
 
 data_new = np.array(letters.values()).flatten()
-
-#for entry in data_new:
-    #print("Q? " + str(entry.letter))
-
 
 words = list(set(withWhitespaces.split(' ')))
 words.sort(key=len)
@@ -94,10 +81,7 @@ two = filter(lambda k: len(k) == 2, words)
 one = filter(lambda k: len(k) == 1, words)
 
 
-
-
 def make_dependencies(eng_words, word):
-    #print("making dependency for " + word + " and " + str(eng_words))
     for c in word:
         letters.get(c).clean_candidates()
     for match in eng_words:
@@ -119,18 +103,13 @@ for w2 in two:
 for w1 in one:
     make_dependencies(oneLetterWords, w1)
 
-#print("LETTERS = " + str(letters))
 for l in letters:
-    #print("LETTER=" + str(l))
     cands_to_remove = []
     for cand in letters[l].candidates.keys():
         for dep in letters[l].candidates[cand].keys():
-            #print "sfis " + str(list(cand)) + " = " + str(letters[l].candidates[cand][dep])
             if letters[l].candidates[cand][dep] == set(cand):
                 cands_to_remove.append(cand)
-                #print "HERE! " + cand
     for cand in cands_to_remove:
-        #print "HERE! " + cand
         letters[l].remove_candidate(cand)
 
 
@@ -141,43 +120,32 @@ sortedDict = {}
 
 for letter in sorted_list:
     sortedDict[letter.letter] = letter
-    #print letter.to_string()
 
 def dojob(letter, sol):
-    print("sdfjds "+ letter.letter + " " + sol)
     if sol in letter.candidates.keys() and letter.solution == "_":
 
         solution = sol
 
         # check if solution violates dependencies
-        print("dependencies for " + str(letter.letter) + " = " + str(sol) + " are " + str(letter.candidates[sol]))
         for dependency in letter.candidates[sol].keys():
             value = letter.candidates[sol][dependency]
-            #print "checking " + str(dependency) + " that should be " + str(value)
             if value == {}:
                 break
             other = sortedDict[dependency]
             has_match = False
             for val in value:
-                # print "checking if " + str(val) + " is " + other.solution + " or one of " + str(other.candidates.keys())
                 if val == other.solution or val in other.candidates.keys():
-                    # print depkey
                     has_match = True
-                # print other.candidates.keys()
-                # print
             if not has_match:
-                #print "NO"
                 solution = "_"
 
         if solution != "_":
-            #print "YES"
             set_solution_for_letter(letter, solution)
 
 
 def set_solution_for_letter(letter, solution):
     letter.set_solution(solution)
     frequentLetters.remove(solution)
-    print(" 01 setting " + letter.letter + " = " + solution + " with cand " + str(letter.candidates))
 
     for other_letter in sorted_list:
         other_letter.remove_candidate(solution)
@@ -187,58 +155,31 @@ def set_solution_for_letter(letter, solution):
         if other_letter.letter == letter.letter:
             break;
         for candid in other_letter.candidates.keys():
-            print("LOOKING FOR " + letter.letter + "="+ solution + " in " + str(other_letter.candidates[candid]))
-            #print("BEFORE =" + str(other_letter.to_string()))
             if letter.letter in other_letter.candidates[candid].keys():
-                #print "1"
                 if solution in other_letter.candidates[candid][letter.letter] or other_letter.candidates[candid][letter.letter] == {}:
-                    print("FULFILLED = " + str(other_letter.candidates[candid][letter.letter]))
                     # free candidate (dependency fulfilled)
                     other_letter.candidates[candid][letter.letter] = {}
                 else:
-                    print("ARGH")
                     # delete candidate
                     del other_letter.candidates[candid]
-                #print "NOT"
-            print("AFTER =" + str(other_letter.to_string()))
 
 
 a = filter(lambda k: len(k) <= 3, withWhitespaces.split(' '))
 counter = collections.Counter(a)
-
-print
-print counter.most_common(10)
-print
-
 the = counter.most_common(1)[0][0]
 
 the_eng = "the"
 
-for entry in sorted_list:
-    print entry.to_string()
-
 for idx, c in enumerate(the):
-    print(" 02 setting " + str(letters[c].letter) + " = " + str(the_eng[idx]))
     set_solution_for_letter(letters[c], the_eng[idx])
 
-print
-print("the is ready")
-print
-
-for entry in sorted_list:
-    print entry.to_string()
 
 # for letter in sorted_list:
 for letter in sorted_list:
     sortedprob = sorted(letter.candidatesProbability.items(), key=operator.itemgetter(1))
-    print "letter " + letter.letter + " prob: " + str(sortedprob)
 
     for fq in sortedprob:
-
         dojob(letter, fq[0])
-
-    # for x in sortedDict.values():
-    # print (x.to_string())
 
 transDict = {'a': "_", 'b': "_", 'c': "_", 'd': "_", 'e': "_", 'f': "_", 'g': "_", 'h': "_", 'i': "_", 'j': "_",
              'k': "_",
@@ -246,8 +187,6 @@ transDict = {'a': "_", 'b': "_", 'c': "_", 'd': "_", 'e': "_", 'f': "_", 'g': "_
              'v': "_",
              'w': "_", 'x': "_", 'y': "_", 'z': "_", " ": " "}
 
-for entry in sorted_list:
-    print entry.to_string()
 
 for entry in sorted_list:
     transDict[entry.letter] = entry.solution
