@@ -2,6 +2,7 @@ import random, re, string, collections, operator
 from pprint import pprint
 from collections import defaultdict
 import numpy as np
+#import enchant
 
 from utils import *
 from letter import Letter
@@ -101,16 +102,13 @@ def make_dependencies(eng_words, word):
         letters.get(c).clean_candidates()
     for match in eng_words:
         for idx, c in enumerate(word):
-            #print("idx = " + str(idx)  + ", c = " + c + " and " + match[idx])
             character = letters.get(c)
             character.add_candidate(match[idx])
             for idDep, dep in enumerate(word):
                 if idDep != idx:
-                    if match[idx] != match[idDep]:
-                        character.add_dependency(match[idx], dep, match[idDep])
-                    else:
-                        character.remove_candidate(match[idx])
-                        break
+                    character.add_dependency(match[idx], dep, match[idDep])
+
+
 
 for w3 in three:
     make_dependencies(threeLetterWords, w3)
@@ -120,6 +118,21 @@ for w2 in two:
 
 for w1 in one:
     make_dependencies(oneLetterWords, w1)
+
+#print("LETTERS = " + str(letters))
+for l in letters:
+    #print("LETTER=" + str(l))
+    cands_to_remove = []
+    for cand in letters[l].candidates.keys():
+        for dep in letters[l].candidates[cand].keys():
+            #print "sfis " + str(list(cand)) + " = " + str(letters[l].candidates[cand][dep])
+            if letters[l].candidates[cand][dep] == set(cand):
+                cands_to_remove.append(cand)
+                #print "HERE! " + cand
+    for cand in cands_to_remove:
+        #print "HERE! " + cand
+        letters[l].remove_candidate(cand)
+
 
 sorted_list = sorted(data_new, key=lambda x: x.frequency, reverse=True)  #
 sorted_list = sorted(sorted_list, key=lambda x: len(x.candidates))
@@ -131,6 +144,7 @@ for letter in sorted_list:
     #print letter.to_string()
 
 def dojob(letter, sol):
+    print("sdfjds "+ letter.letter + " " + sol)
     if sol in letter.candidates.keys() and letter.solution == "_":
 
         solution = sol
@@ -139,7 +153,7 @@ def dojob(letter, sol):
         print("dependencies for " + str(letter.letter) + " = " + str(sol) + " are " + str(letter.candidates[sol]))
         for dependency in letter.candidates[sol].keys():
             value = letter.candidates[sol][dependency]
-            print "checking " + str(dependency) + " that should be " + str(value)
+            #print "checking " + str(dependency) + " that should be " + str(value)
             if value == {}:
                 break
             other = sortedDict[dependency]
@@ -152,11 +166,11 @@ def dojob(letter, sol):
                 # print other.candidates.keys()
                 # print
             if not has_match:
-                print "NO"
+                #print "NO"
                 solution = "_"
 
         if solution != "_":
-            print "YES"
+            #print "YES"
             set_solution_for_letter(letter, solution)
 
 
@@ -189,12 +203,6 @@ def set_solution_for_letter(letter, solution):
             print("AFTER =" + str(other_letter.to_string()))
 
 
-
-
-
-    # todo delete possibilities that are impossible
-
-
 a = filter(lambda k: len(k) <= 3, withWhitespaces.split(' '))
 counter = collections.Counter(a)
 
@@ -225,9 +233,8 @@ for letter in sorted_list:
     sortedprob = sorted(letter.candidatesProbability.items(), key=operator.itemgetter(1))
     print "letter " + letter.letter + " prob: " + str(sortedprob)
 
-    for fq in sortedprob[:5]:
-        # print "do job for " + str(letter.letter) + " and " + str(fq[0]);
-        # print("trying " + str(fq[0]) + " on letter " + str(letter))
+    for fq in sortedprob:
+
         dojob(letter, fq[0])
 
     # for x in sortedDict.values():

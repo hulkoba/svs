@@ -54,14 +54,14 @@ class Letter:
     def add_dependency(self, toLetter, key, value):
         assert toLetter in self.candidates
 
-        print("CAND " + toLetter + " ADD " + key + "="+ value)
+        #print("CAND " + toLetter + " ADD " + key + "="+ value)
 
         dict1 = self.candidates.get(toLetter)
 
         if not self.candidates.get(toLetter) or not key in self.candidates.get(toLetter):
-            dict1[key] = [value];
+            dict1[key] = {value};
         else:
-            self.candidates.get(toLetter)[key].append(value)
+            self.candidates.get(toLetter)[key].update(value)
 
     def get_dependencies_for_letter(self, letter):
         assert letter in self.candidates
@@ -83,6 +83,6 @@ class Letter:
         string = ""
         for cand in self.candidates:
             string += str(cand) + " (if "  + " ) "
-        return "Letter: ", self.letter, " is " , self.solution, "or could be ", json.dumps(self.candidates) + " with probabilites " + json.dumps(self.candidatesProbability)
+        return "Letter: ", self.letter, " is " , self.solution, "or could be ", json.dumps(list(self.candidates)) + " with probabilites " + json.dumps(self.candidatesProbability)
 
 
