@@ -1,5 +1,6 @@
 import json
 
+
 class Letter:
 
     def __init__(self, fromLetter, frequency):
@@ -18,10 +19,6 @@ class Letter:
         self.frequency = frequency
 
     # candidates is meant to be a list
-    def set_candidates(self, toLetter, cands):
-        self.candidates = dict((c,{}) for c in cands)
-
-    # candidates is meant to be a list
     def add_candidates(self, cands):
         self.candidates.update(dict((c,{}) for c in cands))
 
@@ -32,22 +29,21 @@ class Letter:
 
     # candidates is meant to be a list
     def remove_candidates(self, cands):
-    	for cand in cands:
-           del self.candidates[cand]
-           self.candidatesProbability[cand] = 100
-
+        for cand in cands:
+            del self.candidates[cand]
+            self.candidatesProbability[cand] = 100
 
     # candidate is meant to be a string
     def remove_candidate(self, candidate):
         if candidate in self.candidates.keys():
-            print("deleted cand " + candidate)
+            # print("deleted cand " + candidate)
             del self.candidates[candidate]
-        #else:
-            #print("did not delete cand "+ candidate)
+        # else:
+            # print("did not delete cand "+ candidate)
         self.candidatesProbability[candidate] = 100
 
     def clean_candidates(self):
-    	self.candidates = {}
+        self.candidates = {}
 
     def set_probability(self, toLetter, probability):
         assert toLetter in self.candidatesProbability
@@ -58,10 +54,12 @@ class Letter:
     def add_dependency(self, toLetter, key, value):
         assert toLetter in self.candidates
 
+        print("CAND " + toLetter + " ADD " + key + "="+ value)
+
         dict1 = self.candidates.get(toLetter)
 
         if not self.candidates.get(toLetter) or not key in self.candidates.get(toLetter):
-             dict1[key] = [value];
+            dict1[key] = [value];
         else:
             self.candidates.get(toLetter)[key].append(value)
 
@@ -70,12 +68,13 @@ class Letter:
         self.candidates.get(letter)
 
     def remove_dependency(self, toLetter, dependency):
-         del self.candidates[toLetter][dependency]
+        del self.candidates[toLetter][dependency]
 
     def set_solution(self, solution):
-         self.solution = solution
+        self.solution = solution
 
     def validate_dependency(self, key, value):
+        #print("searching " + key + "=" + str(value) + " in " + str(self.candidates))
         if key in self.candidates and value in self.candidates[key]:
             del self.candidates[key]
             assert len(self.candidates) > 0

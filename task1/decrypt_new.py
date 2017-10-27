@@ -26,7 +26,7 @@ alphabet = list(string.ascii_lowercase)
 oneLetterWords = ['a', 'i']
 twoLetterWords = ['he', 'at', 'it', 'if', 'in', 'is', 'on', 'to', 'do', 'go', 'of', 'an', 'so', 'of', 'up', 'as', 'my',
                   'me', 'be', 'as', 'or', 'we', 'by', 'no', 'am', 'us']
-threeLetterWords = ['and', 'for', 'are', 'but', 'not', 'you', 'all', 'any', 'can', 'had', 'her', 'was', 'one',
+threeLetterWords = ['the', 'and', 'for', 'are', 'but', 'not', 'you', 'all', 'any', 'can', 'had', 'her', 'was', 'one',
                     'our', 'out', 'day', 'get', 'has', 'him', 'his', 'how', 'man', 'new', 'now', 'old', 'see', 'two',
                     'way', 'who', 'boy', 'did', 'its', 'let', 'put', 'say', 'too', 'use']
 
@@ -82,7 +82,8 @@ for letter in alphabet:
 
 data_new = np.array(letters.values()).flatten()
 
-
+#for entry in data_new:
+    #print("Q? " + str(entry.letter))
 
 
 words = list(set(withWhitespaces.split(' ')))
@@ -105,8 +106,11 @@ def make_dependencies(eng_words, word):
             character.add_candidate(match[idx])
             for idDep, dep in enumerate(word):
                 if idDep != idx:
-                    character.add_dependency(match[idx], dep, match[idDep])
-
+                    if match[idx] != match[idDep]:
+                        character.add_dependency(match[idx], dep, match[idDep])
+                    else:
+                        character.remove_candidate(match[idx])
+                        break
 
 for w3 in three:
     make_dependencies(threeLetterWords, w3)
@@ -136,6 +140,8 @@ def dojob(letter, sol):
         for dependency in letter.candidates[sol].keys():
             value = letter.candidates[sol][dependency]
             print "checking " + str(dependency) + " that should be " + str(value)
+            if value == {}:
+                break
             other = sortedDict[dependency]
             has_match = False
             for val in value:
@@ -153,18 +159,40 @@ def dojob(letter, sol):
             print "YES"
             set_solution_for_letter(letter, solution)
 
+
 def set_solution_for_letter(letter, solution):
     letter.set_solution(solution)
     frequentLetters.remove(solution)
-    dependencies = letter.candidates[solution]
+    print(" 01 setting " + letter.letter + " = " + solution + " with cand " + str(letter.candidates))
 
-    for other_letter in data_new:
+    for other_letter in sorted_list:
         other_letter.remove_candidate(solution)
         other_letter.validate_dependency(letter.letter, solution)
 
-    for reqKey, reqVal in dependencies.iteritems():
-        for v in reqVal:
-            dojob(sortedDict[reqKey], v)
+    for other_letter in sorted_list:
+        if other_letter.letter == letter.letter:
+            break;
+        for candid in other_letter.candidates.keys():
+            print("LOOKING FOR " + letter.letter + "="+ solution + " in " + str(other_letter.candidates[candid]))
+            #print("BEFORE =" + str(other_letter.to_string()))
+            if letter.letter in other_letter.candidates[candid].keys():
+                #print "1"
+                if solution in other_letter.candidates[candid][letter.letter] or other_letter.candidates[candid][letter.letter] == {}:
+                    print("FULFILLED = " + str(other_letter.candidates[candid][letter.letter]))
+                    # free candidate (dependency fulfilled)
+                    other_letter.candidates[candid][letter.letter] = {}
+                else:
+                    print("ARGH")
+                    # delete candidate
+                    del other_letter.candidates[candid]
+                #print "NOT"
+            print("AFTER =" + str(other_letter.to_string()))
+
+
+
+
+
+    # todo delete possibilities that are impossible
 
 
 a = filter(lambda k: len(k) <= 3, withWhitespaces.split(' '))
@@ -178,8 +206,19 @@ the = counter.most_common(1)[0][0]
 
 the_eng = "the"
 
+for entry in sorted_list:
+    print entry.to_string()
+
 for idx, c in enumerate(the):
+    print(" 02 setting " + str(letters[c].letter) + " = " + str(the_eng[idx]))
     set_solution_for_letter(letters[c], the_eng[idx])
+
+print
+print("the is ready")
+print
+
+for entry in sorted_list:
+    print entry.to_string()
 
 # for letter in sorted_list:
 for letter in sorted_list:
