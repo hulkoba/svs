@@ -31,9 +31,12 @@ threeLetterWords = ['the', 'and', 'for', 'are', 'but', 'not', 'you', 'all', 'any
                     'our', 'out', 'day', 'get', 'has', 'him', 'his', 'how', 'man', 'new', 'now', 'old', 'see', 'two',
                     'way', 'who', 'boy', 'did', 'its', 'let', 'put', 'say', 'too', 'use']
 
+transDict = {'a': "_", 'b': "_", 'c': "_", 'd': "_", 'e': "_", 'f': "_", 'g': "_", 'h': "_", 'i': "_", 'j': "_",
+             'k': "_", 'l': "_", 'm': "_", 'n': "_", 'o': "_", 'p': "_", 'q': "_", 'r': "_", 's': "_", 't': "_",
+             'u': "_", 'v': "_",  'w': "_", 'x': "_", 'y': "_", 'z': "_", " ": " "}
+
 def makewhitespace(cipher, ws_letter):
     return cipher.replace(ws_letter, englishLetterFrequency[0])
-
 
 def decrypt(cipher, dictionary):
     word_text = ''
@@ -91,7 +94,6 @@ def make_dependencies(eng_words, word):
             for idDep, dep in enumerate(word):
                 if idDep != idx:
                     character.add_dependency(match[idx], dep, match[idDep])
-
 
 
 for w3 in three:
@@ -165,35 +167,69 @@ def set_solution_for_letter(letter, solution):
 
 
 a = filter(lambda k: len(k) <= 3, withWhitespaces.split(' '))
-counter = collections.Counter(a)
-the = counter.most_common(1)[0][0]
-
-the_eng = "the"
+the = collections.Counter(a).most_common(1)[0][0]
 
 for idx, c in enumerate(the):
-    set_solution_for_letter(letters[c], the_eng[idx])
+    set_solution_for_letter(letters[c], "the"[idx])
 
+for entry in sorted_list:
+    print(entry.to_string())
+
+print
 
 # for letter in sorted_list:
 for letter in sorted_list:
     sortedprob = sorted(letter.candidatesProbability.items(), key=operator.itemgetter(1))
-
     for fq in sortedprob:
         dojob(letter, fq[0])
 
-transDict = {'a': "_", 'b': "_", 'c': "_", 'd': "_", 'e': "_", 'f': "_", 'g': "_", 'h': "_", 'i': "_", 'j': "_",
-             'k': "_",
-             'l': "_", 'm': "_", 'n': "_", 'o': "_", 'p': "_", 'q': "_", 'r': "_", 's': "_", 't': "_", 'u': "_",
-             'v': "_",
-             'w': "_", 'x': "_", 'y': "_", 'z': "_", " ": " "}
-
 
 for entry in sorted_list:
+    print(entry.to_string())
     transDict[entry.letter] = entry.solution
 
 print
 print withWhitespaces
 print
-print decrypt(withWhitespaces, transDict)
+decrypted = decrypt(withWhitespaces, transDict)
+print decrypted
 print
 print readFileToString(inputFilename)
+print
+print("=============== PART2 : dict brute force =================")
+print
+
+letters_left = frequentLetters
+
+print "Letters left: " + str(letters_left)
+print
+
+letters_brute_force = {}
+
+for entry in sorted_list:
+    if entry.solution == "_":
+        letters_brute_force[entry.letter] = entry
+        #letters_brute_force.append(entry)
+
+print
+for entry in letters_brute_force.keys():
+    print(str(letters_brute_force[entry].to_string()))
+
+encryped_words_with_missing_letters = []
+words_with_missing_letters = []
+print
+encr = withWhitespaces.split(" ")
+for idx, word in enumerate(decrypted.split(' ')):
+    if "_" in word :
+        words_with_missing_letters.append(word)
+        encryped_words_with_missing_letters.append(encr[idx])
+
+words_with_missing_letters.sort(key=len, reverse=True)
+print "words with missing letters: " + str(words_with_missing_letters)
+print "words with missing letters: " + str(encryped_words_with_missing_letters)
+
+for idx, word in enumerate(words_with_missing_letters):
+    for idy, c in enumerate(word):
+        if c == "_":
+            print letters_brute_force[encryped_words_with_missing_letters[idx]]
+

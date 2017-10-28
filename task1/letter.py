@@ -1,13 +1,11 @@
 import json
-
+import operator
 
 class Letter:
 
     def __init__(self, fromLetter, frequency):
         self.letter = fromLetter
-        self.candidates = {'a': {}, 'b': {}, 'c': {}, 'd': {}, 'e': {}, 'f': {}, 'g': {}, 'h': {}, 'i': {}, 'j': {}, 'k': {},
-      'l': {}, 'm': {}, 'n': {}, 'o': {}, 'p': {}, 'q': {}, 'r': {}, 's': {}, 't': {}, 'u': {}, 'v': {},
-      'w': {}, 'x': {}, 'y': {}, 'z': {}}
+        self.candidates = {}
         self.candidatesProbability = {'a': 100, 'b': 100, 'c': 100, 'd': 100, 'e': 100, 'f': 100, 'g': 100, 'h': 100, 'i': 100, 'j': 100, 'k': 100,
       'l': 100, 'm': 100, 'n': 100, 'o': 100, 'p': 100, 'q': 100, 'r': 100, 's': 100, 't': 100, 'u': 100, 'v': 100,
       'w': 100, 'x': 100, 'y': 100, 'z': 100}
@@ -83,6 +81,7 @@ class Letter:
         string = ""
         for cand in self.candidates:
             string += str(cand) + " (if "  + " ) "
-        return "Letter: ", self.letter, " is " , self.solution, "or could be ", json.dumps(list(self.candidates)) + " with probabilites " + json.dumps(self.candidatesProbability)
+        sortedProbs = sorted(self.candidatesProbability.items(), key=operator.itemgetter(1))
+        return "Letter: ", self.letter, " is " , self.solution, "or could be ", json.dumps(list(self.candidates)) + " with probabilites " + json.dumps(sortedProbs)
 
 
