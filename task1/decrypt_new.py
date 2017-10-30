@@ -209,9 +209,10 @@ letters_brute_force = {}
 for entry in sorted_list:
     if entry.solution == "_":
         letters_brute_force[entry.letter] = entry
-        #letters_brute_force.append(entry)
+        # letters_brute_force.append(entry)
 
 print
+
 for entry in letters_brute_force.keys():
     print(str(letters_brute_force[entry].to_string()))
 
@@ -224,12 +225,72 @@ for idx, word in enumerate(decrypted.split(' ')):
         words_with_missing_letters.append(word)
         encryped_words_with_missing_letters.append(encr[idx])
 
+#encryped_words_with_missing_letters = list(set(encryped_words_with_missing_letters))
+#words_with_missing_letters = list(set(words_with_missing_letters))
 words_with_missing_letters.sort(key=len, reverse=True)
+encryped_words_with_missing_letters.sort(key=len, reverse=True)
 print "words with missing letters: " + str(words_with_missing_letters)
 print "words with missing letters: " + str(encryped_words_with_missing_letters)
+print "letters bute force: " + str(letters_brute_force)
 
+d = enchant.request_dict("en_US")
+print(d.check("denouncing"))
+found_g = ""
 for idx, word in enumerate(words_with_missing_letters):
-    for idy, c in enumerate(word):
-        if c == "_":
-            print letters_brute_force[encryped_words_with_missing_letters[idx]]
+    encrypted_word = encryped_words_with_missing_letters[idx]
+    #print("word " + word + " could be " + str(d.suggest(word.replace("_", " "))))
+
+    if found_g == "" and word[len(word) - 1] == "_" and word[len(word) - 3: len(word) - 1] == "in":
+        found_g = encrypted_word[len(word) - 1]
+        transDict[found_g] = "g"
+        letters_left.remove("g")
+        del letters_brute_force[found_g]
+
+
+    word = decrypt(encrypted_word, transDict)
+
+    suggestions = d.suggest(word)
+
+    suggestions = filter(lambda k: len(k) == len(word), suggestions)
+    print("word " + word + " could be " + str(suggestions))
+
+    for sugg in suggestions:
+        valid = True
+        for idc, char in enumerate(sugg):
+            # check if all _-letters are looked for
+            if word[idc] != char and( word[idc] == "_" and encrypted_word[idc] not in letters_brute_force.keys() and char in letters_left):
+                print(encrypted_word[idc] + " not in " + str(letters_brute_force.keys()))
+                valid = False
+                print("BREAK 1 " + word  + " " + sugg)
+                break
+
+
+        if valid == True:
+            for idc, char in enumerate(sugg):
+                if word[idc] == "_":
+                    transDict[encrypted_word[idc]] = char
+                    print("setting "+ encrypted_word[idc] + " = " + char)
+                    if encrypted_word[idc] in letters_brute_force:
+                        del letters_brute_force[encrypted_word[idc]]
+                    if char in letters_left:
+                        letters_left.remove(char)
+                    #break
+
+print withWhitespaces
+print
+decrypted = decrypt(withWhitespaces, transDict)
+print decrypted
+print
+print readFileToString(inputFilename)
+print
+
+                    # print("word " + word + " could be " + str(d.suggest(word.replace("_", " "))))
+    # for idy, c in enumerate(word):
+    #     if c == "_":
+    #         for entry in letters_brute_force.keys():
+    #             # letters_brute_force
+    #             print words_with_missing_letters[idx][idy]
+    #             print encryped_words_with_missing_letters[idx][idy]
+
+
 
