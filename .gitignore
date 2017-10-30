@@ -100,3 +100,4 @@ ENV/
 # mypy
 .mypy_cache/
 decrypted-plaintext.txt
+*.pyc
