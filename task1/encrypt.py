@@ -1,32 +1,29 @@
-import random, string, collections
-from pprint import pprint
+import random
 
-from utils import *
+from utils import get_alphabet, read_file_to_string, write_string_to_file
+from constants import INPUT_FILENAME, OUPUT_FILENAME
 
 def encrypt(plain):
-    alphabet = getAlphabet()
-    #key = list(alphabet)
+    alphabet = get_alphabet()
     key = alphabet[:]
     random.shuffle(key)
     encryption = dict(zip(alphabet, key))
 
     #build an encrypted string
     ciphertext = ''
-    for c in plain:
+    for letter in plain:
         try:
-          ciphertext += encryption[c]
+            ciphertext += encryption[letter]
         except:
-          ciphertext += c
+            ciphertext += letter
 
     return ciphertext
 
 # read the plaintext file
-plaintext = readFileToString(inputFilename)
+PLAINTEXT = read_file_to_string(INPUT_FILENAME)
 
-frequency = getLetterFrequency(plaintext.lower());
-print "############################"
-pprint(frequency);
-cryptedText = encrypt(plaintext.lower())
+# encrypt
+CRYPTED_TEXT = encrypt(PLAINTEXT.lower())
 
-print '\n crypted text \n', cryptedText
-writeStringToFile(outputFilename, cryptedText)
+print '\n encrypted text: \n', CRYPTED_TEXT
+write_string_to_file(OUPUT_FILENAME, CRYPTED_TEXT)

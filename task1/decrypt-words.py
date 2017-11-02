@@ -4,18 +4,18 @@ from collections import defaultdict
 
 from utils import *
 
-englishLetterFrequency = [' ','e','t','a','o','i','n','s','h','r','d','l','c','u','m','w','f','g','y','p','b','v','k','j','x','q','z']
+LETTER_FREQUENCY = [' ','e','t','a','o','i','n','s','h','r','d','l','c','u','m','w','f','g','y','p','b','v','k','j','x','q','z']
 
 # eher Ausschlusskriterien als Reihenfolge bzgl. Häufigkeit
-oneLetterWords = ['a', 'i']
-twoLetterWords = ['he', 'at', 'it', 'if', 'in', 'is', 'on', 'to', 'do', 'go', 'of', 'an', 'so', 'of', 'up', 'as', 'my', 'me', 'be', 'as', 'or', 'we', 'by', 'no', 'am', 'us']
-threeLetterWords = ['the', 'and', 'for', 'are', 'but', 'not', 'you', 'all', 'any', 'can', 'had', 'her', 'was', 'one', 'our', 'out', 'day', 'get', 'has', 'him', 'his', 'how', 'man', 'new', 'now', 'old', 'see', 'two', 'way','who','boy','did','its', 'let', 'put', 'say','too','use']
+ONE_LETTER_WORDS = ['a', 'i']
+TWO_LETTER_WORDS = ['he', 'at', 'it', 'if', 'in', 'is', 'on', 'to', 'do', 'go', 'of', 'an', 'so', 'of', 'up', 'as', 'my', 'me', 'be', 'as', 'or', 'we', 'by', 'no', 'am', 'us']
+THREE_LETTER_WORDS = ['the', 'and', 'for', 'are', 'but', 'not', 'you', 'all', 'any', 'can', 'had', 'her', 'was', 'one', 'our', 'out', 'day', 'get', 'has', 'him', 'his', 'how', 'man', 'new', 'now', 'old', 'see', 'two', 'way','who','boy','did','its', 'let', 'put', 'say','too','use']
 matchDict = {}
 
 def createDict(cipherText):
-  textFrequency = getLetterFrequency(cipherText)
-  frequencyKeys = getKeys(textFrequency)
-  decryption = dict(zip(frequencyKeys, englishLetterFrequency))
+  textFrequency = get_letter_frequency(cipherText)
+  frequencyKeys = get_keys(textFrequency)
+  decryption = dict(zip(frequencyKeys, LETTER_FREQUENCY))
   return decryption
 
 def getWords(text, dict):
@@ -36,7 +36,7 @@ def decrypt3Words(cipher, dictionary, matchDict):
   words = cipher.split(' ')
 
   for word in words:
-    if len(word) == 3 and word in threeLetterWords:
+    if len(word) == 3 and word in THREE_LETTER_WORDS:
       if(word[0] not in dictionary[word[0]]):
         matchDict[word[0]] = dictionary[word[0]]
         #del dictionary[word[0]]
@@ -49,7 +49,7 @@ def decrypt3Words(cipher, dictionary, matchDict):
         matchDict[word[2]] = dictionary[word[2]]
         #del dictionary[word[2]]
 
-    elif len(word) == 3 and word not in threeLetterWords:
+    elif len(word) == 3 and word not in THREE_LETTER_WORDS:
       if word == 'tie':
         matchDict[word[0]] = dictionary[word[0]]
         matchDict[word[1]] = 'h'
@@ -86,7 +86,7 @@ def decrypt1Word(cipher, dictionary):
   for idx, letter in enumerate(newLetterCount):
     print idx, letter
     #newLetterCount.keys()[letter.idx]
-    matchDict[letter[0]] = oneLetterWords[idx]
+    matchDict[letter[0]] = ONE_LETTER_WORDS[idx]
 
   #print matchDict
   plaintext = cipher
@@ -141,7 +141,7 @@ def decryptEnd(cipher, dictionary, matchDict):
 print '----------decrypt--------------'
 
 # read the ciphertext
-cipherText = readFileToString(outputFilename)
+cipherText = read_file_to_string(OUPUT_FILENAME)
 
 decryptedDict = createDict(cipherText)
 
@@ -157,4 +157,4 @@ print 'beforetex:', wordSeparatedText
 print '----------------------------------------------------------------------------'
 print "plaintext:", oneWordDecrypted
 
-writeStringToFile("decrypted-plaintext.txt", oneWordDecrypted)
+write_string_to_file("decrypted-plaintext.txt", oneWordDecrypted)

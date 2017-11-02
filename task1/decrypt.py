@@ -1,18 +1,18 @@
 import random, re, string, collections, operator
 from pprint import pprint
-from collections import defaultdict
+
 
 from utils import *
+from constants import LETTER_FREQUENCY, OUPUT_FILENAME
 
-englishLetterFrequency = [' ','e','t','a','o','i','n','s','h','r','d','l','c','u','m','w','f','g','y','p','b','v','k','j','x','q','z']
 
-def createDict(cipherText):
-  textFrequency = getLetterFrequency(cipherText)
-  frequencyKeys = getKeys(textFrequency)
-  #myFrequency =            [' ','e','t','a','o','h','i','s','n','l','r','d','u','f','m','c','g','w','y','b','p','v','k','x','z','q','j']
-  decryption = dict(zip(frequencyKeys, englishLetterFrequency))
-  #decryption = dict(zip(frequencyKeys, myFrequency))
-  return decryption
+def createDict(cipher):
+    textFrequency = get_letter_frequency(cipher)
+    frequencyKeys = get_keys(textFrequency)
+    #myFrequency =            [' ','e','t','a','o','h','i','s','n','l','r','d','u','f','m','c','g','w','y','b','p','v','k','x','z','q','j']
+    decryption = dict(zip(frequencyKeys, LETTER_FREQUENCY))
+    #decryption = dict(zip(frequencyKeys, myFrequency))
+    return decryption
 
 
 def decrypt(cipher, dictionary):
@@ -45,11 +45,11 @@ def decrypt(cipher, dictionary):
 print '----------decrypt--------------'
 
 # read the ciphertext
-cipherText = readFileToString(outputFilename)
+cipherText = read_file_to_string(OUPUT_FILENAME)
 
 decryptedDict = createDict(cipherText)
 
 easydecrypted = decrypt(cipherText, decryptedDict)
 print "plaintext:", easydecrypted
 
-writeStringToFile("decrypted-plaintext.txt", easydecrypted)
+write_string_to_file("decrypted-plaintext.txt", easydecrypted)

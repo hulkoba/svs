@@ -1,127 +1,49 @@
-import random, re, string, collections, operator
-from pprint import pprint
-from collections import defaultdict
-import numpy as np
+import string
+import collections
+
+# import numpy as np
 import enchant
 
 from utils import *
+from constants import *
 from letter import Letter
 
-import collections
-
-
-englishLetterFrequency = [' ', 'e', 't', 'a', 'o', 'i', 'n', 's', 'h', 'r', 'd', 'l', 'c', 'u', 'm', 'w', 'f', 'g', 'y',
-                          'p', 'b', 'v', 'k', 'j', 'x', 'q', 'z']
-
-frequentLetters = ['e', 't', 'a', 'o', 'i', 'n', 's', 'h', 'r', 'd', 'l', 'c', 'u', 'm', 'w', 'f', 'g', 'y', 'p', 'b',
-                   'v', 'k', 'j', 'x', 'q', 'z']
-
-englishLetterPercentage = {'e': 12.702, 't': 9.056, 'a': 8.167, 'o': 7.507, 'i': 6.966, 'n': 6.749, 's': 6.327,
-                           'h': 6.094, 'r': 5.987, 'd': 4.253, 'l': 4.025, 'c': 2.782, 'u': 2.758, 'm': 2.406,
-                           'w': 2.360, 'f': 2.228, 'g': 2.015, 'y': 1.974, 'p': 1.929, 'b': 1.492, 'v': 0.978,
-                           'k': 0.772, 'j': 0.153, 'x': 0.150, 'q': 0.095, 'z': 0.074}
-
+enchant = enchant.request_dict("en_US")
 alphabet = list(string.ascii_lowercase)
 
-# eher Ausschlusskriterien als Reihenfolge bzgl. Haeufigkeit
-oneLetterWords = ['a', 'i']
-twoLetterWords = ['he', 'at', 'it', 'if', 'in', 'is', 'on', 'to', 'do', 'go', 'of', 'an', 'so', 'of', 'up', 'as', 'my',
-                  'me', 'be', 'as', 'or', 'we', 'by', 'no', 'am', 'us']
-threeLetterWords = ['the', 'and', 'for', 'are', 'but', 'not', 'you', 'all', 'any', 'can', 'had', 'her', 'was', 'one',
-                    'our', 'out', 'day', 'get', 'has', 'him', 'his', 'how', 'man', 'new', 'now', 'old', 'see', 'two',
-                    'way', 'who', 'boy', 'did', 'its', 'let', 'put', 'say', 'too', 'use']
+transDict = {'a': "_", 'b': "_", 'c': "_", 'd': "_", 'e': "_", 'f': "_", 'g': "_", 'h': "_",
+             'i': "_", 'j': "_", 'k': "_", 'l': "_", 'm': "_", 'n': "_", 'o': "_", 'p': "_",
+             'q': "_", 'r': "_", 's': "_", 't': "_", 'u': "_", 'v': "_", 'w': "_", 'x': "_",
+             'y': "_", 'z': "_", " ": " "}
 
-transDict = {'a': "_", 'b': "_", 'c': "_", 'd': "_", 'e': "_", 'f': "_", 'g': "_", 'h': "_", 'i': "_", 'j': "_",
-             'k': "_", 'l': "_", 'm': "_", 'n': "_", 'o': "_", 'p': "_", 'q': "_", 'r': "_", 's': "_", 't': "_",
-             'u': "_", 'v': "_",  'w': "_", 'x': "_", 'y': "_", 'z': "_", " ": " "}
 
-def makewhitespace(cipher, ws_letter):
-    return cipher.replace(ws_letter, englishLetterFrequency[0])
+##########################################################################################
+########################### functions ####################################################
+##########################################################################################
 
 def decrypt(cipher, dictionary):
     word_text = ''
 
-    for l in cipher:
-        if l in dictionary:
-            word_text += dictionary[l]
+    for character in cipher:
+        if character in dictionary:
+            word_text += dictionary[character]
         else:
             word_text += "_"
 
     return word_text
 
 
-cipherText = readFileToString(outputFilename)
-frequency = getLetterFrequency(cipherText)
-
-withWhitespaces = makewhitespace(cipherText, frequency[0][0])
-lettersTotal = len(withWhitespaces.replace(' ', ''))
-
-freqDict = {}
-
-frequency2 = getLetterFrequency(withWhitespaces.replace(' ', ''))
-
-for letter, score in frequency2:
-    freqDict[letter] = (score / float(lettersTotal)) * 100
-
-del freqDict[' ']
-
-letters = {}
-for letter in alphabet:
-    newLetter = Letter(letter, freqDict[letter])
-    for otherLetter in englishLetterPercentage.keys():
-        prob = englishLetterPercentage[otherLetter]
-        newLetter.set_probability(otherLetter, abs(freqDict[letter] - prob))
-
-    newLetter.set_frequency(dict(frequency2)[letter])
-    letters[letter] = newLetter
-
-data_new = np.array(letters.values()).flatten()
-
-words = list(set(withWhitespaces.split(' ')))
-words.sort(key=len)
-three = filter(lambda k: len(k) == 3, words)
-two = filter(lambda k: len(k) == 2, words)
-one = filter(lambda k: len(k) == 1, words)
-
-
 def make_dependencies(eng_words, word):
     for c in word:
         letters.get(c).clean_candidates()
     for match in eng_words:
-        for idx, c in enumerate(word):
+        for index, c in enumerate(word):
             character = letters.get(c)
-            character.add_candidate(match[idx])
-            for idDep, dep in enumerate(word):
-                if idDep != idx:
-                    character.add_dependency(match[idx], dep, match[idDep])
+            character.add_candidate(match[index])
+            for dep_index, dep in enumerate(word):
+                if dep_index != index:
+                    character.add_dependency(match[index], dep, match[dep_index])
 
-
-for w3 in three:
-    make_dependencies(threeLetterWords, w3)
-
-for w2 in two:
-    make_dependencies(twoLetterWords, w2)
-
-for w1 in one:
-    make_dependencies(oneLetterWords, w1)
-
-for l in letters:
-    cands_to_remove = []
-    for cand in letters[l].candidates.keys():
-        for dep in letters[l].candidates[cand].keys():
-            if letters[l].candidates[cand][dep] == set(cand):
-                cands_to_remove.append(cand)
-    for cand in cands_to_remove:
-        letters[l].remove_candidate(cand)
-
-
-sorted_list = sorted(data_new, key=lambda x: x.frequency, reverse=True)  #
-sorted_list = sorted(sorted_list, key=lambda x: len(x.candidates))
-
-sortedDict = {}
-
-for letter in sorted_list:
-    sortedDict[letter.letter] = letter
 
 def dojob(letter, sol):
     if sol in letter.candidates.keys() and letter.solution == "_":
@@ -133,7 +55,7 @@ def dojob(letter, sol):
             value = letter.candidates[sol][dependency]
             if value == {}:
                 break
-            other = sortedDict[dependency]
+            other = sorted_dict[dependency]
             has_match = False
             for val in value:
                 if val == other.solution or val in other.candidates.keys():
@@ -147,7 +69,7 @@ def dojob(letter, sol):
 
 def set_solution_for_letter(letter, solution):
     letter.set_solution(solution)
-    frequentLetters.remove(solution)
+    FREQUENT_LETTERS.remove(solution)
 
     for other_letter in sorted_list:
         other_letter.remove_candidate(solution)
@@ -155,7 +77,7 @@ def set_solution_for_letter(letter, solution):
 
     for other_letter in sorted_list:
         if other_letter.letter == letter.letter:
-            break;
+            break
         for candid in other_letter.candidates.keys():
             if letter.letter in other_letter.candidates[candid].keys():
                 if solution in other_letter.candidates[candid][letter.letter] or other_letter.candidates[candid][letter.letter] == {}:
@@ -164,69 +86,6 @@ def set_solution_for_letter(letter, solution):
                 else:
                     # delete candidate
                     del other_letter.candidates[candid]
-
-
-a = filter(lambda k: len(k) <= 3, withWhitespaces.split(' '))
-the = collections.Counter(a).most_common(1)[0][0]
-
-for idx, c in enumerate(the):
-    set_solution_for_letter(letters[c], "the"[idx])
-
-for entry in sorted_list:
-    print(entry.to_string())
-
-print
-
-# for letter in sorted_list:
-for letter in sorted_list:
-    sortedprob = sorted(letter.candidatesProbability.items(), key=operator.itemgetter(1))
-    for fq in sortedprob:
-        dojob(letter, fq[0])
-
-
-for entry in sorted_list:
-    print(entry.to_string())
-    transDict[entry.letter] = entry.solution
-
-print
-print withWhitespaces
-print
-decrypted = decrypt(withWhitespaces, transDict)
-print decrypted
-print
-print readFileToString(inputFilename)
-
-print
-print("=============== PART2 : dict mapping =================")
-print
-
-letters_left = frequentLetters
-
-letters_brute_force = []
-
-for entry in sorted_list:
-    if entry.solution == "_":
-        letters_brute_force.append(entry.letter)
-
-encryped_words_with_missing_letters = []
-words_with_missing_letters = []
-encr = withWhitespaces.split(" ")
-
-for idx, word in enumerate(decrypted.split(' ')):
-    if "_" in word:
-        words_with_missing_letters.append(word)
-        encryped_words_with_missing_letters.append(encr[idx])
-
-
-words_with_missing_letters.sort(key=len, reverse=True)
-encryped_words_with_missing_letters.sort(key=len, reverse=True)
-
-print("words with missing letters: " + str(words_with_missing_letters))
-print("words with missing letters: " + str(encryped_words_with_missing_letters))
-print("Letter mapping missing: " + str(letters_brute_force))
-print(" ---------------------> " + str(letters_left))
-print
-
 
 def validate_requirements(tmp_word, enc_word, suggestion):
     # check if suggestion matches all requirements
@@ -245,50 +104,188 @@ def validate_requirements(tmp_word, enc_word, suggestion):
 
 
 def assign_letter(letter_from, letter_to):
-    print("setting " + letter_from + " = " + letter_to)
+    print "setting " + letter_from + " to " + letter_to
     transDict[letter_from] = letter_to
     letters_left.remove(letter_to)
     letters_brute_force.remove(letter_from)
 
+def fill_missing_letters(uncomplete_word, word):
+     
+    # identify g as the last letter of a word if the two next to last letters are "in"
+    if "g" not in transDict.values() and word[len(word) - 1] == "_" and word[len(word) - 3: len(word) - 1] == "in":
+        encrypted_g = uncomplete_word[len(word) - 1]
+        assign_letter(encrypted_g, "g")
 
-d = enchant.request_dict("en_US")
+    # apply newest dicttionary to word
+    word = decrypt(uncomplete_word, transDict)
+
+    # find suggestions
+    suggestions = enchant.suggest(word)
+
+    # only take words that are of the same length as our word
+    suggestions = filter(lambda k: len(k) == len(word), suggestions)
+    print "word " + word + " could be " + str(suggestions)
+
+    # go through all suggestions
+    for sugg in suggestions:
+
+        if validate_requirements(word, uncomplete_word, sugg):
+            for idc, char in enumerate(sugg):
+                encrypted_letter = uncomplete_word[idc]
+                if word[idc] == "_" and encrypted_letter in letters_brute_force and char in letters_left:
+                    assign_letter(encrypted_letter, char)
+            break
+
+
+
+##########################################################################################
+########################### go ###########################################################
+##########################################################################################
+
+ciphertext = read_file_to_string(OUPUT_FILENAME)
+frequency = get_letter_frequency(ciphertext)
+
+cipher_with_spaces = add_whitespace(ciphertext, frequency[0][0])
+cipher_without_spaces = cipher_with_spaces.split(' ')
+
+freqDict = {}
+frequency2 = get_letter_frequency(cipher_with_spaces.replace(' ', ''))
+letters_total = len(cipher_with_spaces.replace(' ', ''))
+
+
+for letter, score in frequency2:
+    freqDict[letter] = (score / float(letters_total)) * 100
+
+del freqDict[' ']
+
+#################################### function
+letters = {}
+for letter in alphabet:
+    newLetter = Letter(letter, freqDict[letter])
+    for otherLetter in LETTER_PERCENTAGE:
+        prob = LETTER_PERCENTAGE[otherLetter]
+        newLetter.set_probability(otherLetter, abs(freqDict[letter] - prob))
+
+    newLetter.set_frequency(dict(frequency2)[letter])
+    letters[letter] = newLetter
+#####################################
+
+words = list(set(cipher_without_spaces))
+words.sort(key=len)
+
+########################################
+three = get_words_with(3, words)
+two = get_words_with(2, words)
+one = get_words_with(1, words)
+
+
+for w3 in three:
+    make_dependencies(THREE_LETTER_WORDS, w3)
+
+for w2 in two:
+    make_dependencies(TWO_LETTER_WORDS, w2)
+
+for w1 in one:
+    make_dependencies(ONE_LETTER_WORDS, w1)
+##########################################
+
+##########################################
+for l in letters:
+    cands_to_remove = []
+    for cand in letters[l].candidates.keys():
+        for dep in letters[l].candidates[cand].keys():
+            if letters[l].candidates[cand][dep] == set(cand):
+                cands_to_remove.append(cand)
+    for cand in cands_to_remove:
+        letters[l].remove_candidate(cand)
+#############################################
+
+
+#data_new = np.array(letters.values()).flatten()
+data_new = letters.values()
+
+sorted_list = sorted(data_new, key=lambda x: x.frequency, reverse=True)
+sorted_list = sorted(sorted_list, key=lambda x: len(x.candidates))
+
+sorted_dict = {}
+
+for letter in sorted_list:
+    sorted_dict[letter.letter] = letter
+
+
+a = filter(lambda k: len(k) <= 3, cipher_without_spaces)
+the = collections.Counter(a).most_common(1)[0][0]
+
+for idx, c in enumerate(the):
+    set_solution_for_letter(letters[c], "the"[idx])
+
+for entry in sorted_list:
+    print entry.to_string()
+
+print
+
+for letter in sorted_list:
+    sortedprob = sort(letter.candidates_probability)
+    for fq in sortedprob:
+        dojob(letter, fq[0])
+
+
+for entry in sorted_list:
+    transDict[entry.letter] = entry.solution
+
+print
+print cipher_with_spaces
+print
+decrypted = decrypt(cipher_with_spaces, transDict)
+print decrypted
+print
+print read_file_to_string(INPUT_FILENAME)
+
+print
+print "=============== PART2 : dict mapping ================="
+print
+
+letters_left = FREQUENT_LETTERS
+
+letters_brute_force = []
+
+for entry in sorted_list:
+    if entry.solution == "_":
+        letters_brute_force.append(entry.letter)
+
+encryped_words_with_missing_letters = []
+words_with_missing_letters = []
+encr = cipher_without_spaces
+
+for idx, word in enumerate(decrypted.split(' ')):
+    if "_" in word:
+        words_with_missing_letters.append(word)
+        encryped_words_with_missing_letters.append(encr[idx])
+
+
+words_with_missing_letters.sort(key=len, reverse=True)
+encryped_words_with_missing_letters.sort(key=len, reverse=True)
+
+print "words with missing letters: " + str(words_with_missing_letters)
+print "words with missing letters: " + str(encryped_words_with_missing_letters)
+print "Letter mapping missing: " + str(letters_brute_force)
+print " ---------------------> " + str(letters_left)
+print
+
 
 # go through all words with blanks
 for idx, word in enumerate(words_with_missing_letters):
     encrypted_word = encryped_words_with_missing_letters[idx]
 
-    # identify g as the last letter of a word if the two next to last letters are "in"
-    if "g" not in transDict.values() and word[len(word) - 1] == "_" and word[len(word) - 3: len(word) - 1] == "in":
-        encrypted_g = encrypted_word[len(word) - 1]
-        assign_letter(encrypted_g, "g")
+    fill_missing_letters(encrypted_word, word)
 
-    # apply newest dicttionary to word
-    word = decrypt(encrypted_word, transDict)
-
-    # find suggestions
-    suggestions = d.suggest(word)
-
-    # only take words that are of the same length as our word
-    suggestions = filter(lambda k: len(k) == len(word), suggestions)
-    print("word " + word + " could be " + str(suggestions))
-
-    # go through all suggestions
-    for sugg in suggestions:
-
-        if validate_requirements(word, encrypted_word, sugg):
-            for idc, char in enumerate(sugg):
-                encrypted_letter = encrypted_word[idc]
-                if word[idc] == "_" and encrypted_letter in letters_brute_force and char in letters_left:
-                    assign_letter(encrypted_letter, char)
-            break
 
 print
-print("=============== SOLUTION =================")
+print "=============== SOLUTION ================="
 print
-print withWhitespaces
+print 'cipher with spaces: \n', cipher_with_spaces
 print
-print decrypt(withWhitespaces, transDict)
+print 'decryped text :party: \n', decrypt(cipher_with_spaces, transDict)
 print
-print readFileToString(inputFilename)
+print 'given solution: \n', read_file_to_string(INPUT_FILENAME)
 print
-
