@@ -1,9 +1,6 @@
 import operator
 import string
 
-from constants import LETTER_FREQUENCY
-
-
 def get_alphabet():
     #abc = [chr(a+97) for a in range(26)]
     abc = list(string.ascii_lowercase)
@@ -53,5 +50,4 @@ def get_words_with(number, words):
     return filter(lambda k: len(k) == number, words)
 
 def add_whitespace(cipher, ws_letter):
-    return cipher.replace(ws_letter, LETTER_FREQUENCY[0])
-   # return cipher.replace(ws_letter, ' ')
+    return cipher.replace(ws_letter, ' ')

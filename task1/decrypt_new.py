@@ -1,7 +1,6 @@
 import string
 import collections
 
-# import numpy as np
 import enchant
 
 from utils import *
@@ -9,6 +8,7 @@ from constants import *
 from letter import Letter
 
 enchant = enchant.request_dict("en_US")
+
 alphabet = list(string.ascii_lowercase)
 
 transDict = {'a': "_", 'b': "_", 'c': "_", 'd': "_", 'e': "_", 'f': "_", 'g': "_", 'h': "_",
@@ -110,7 +110,7 @@ def assign_letter(letter_from, letter_to):
     letters_brute_force.remove(letter_from)
 
 def fill_missing_letters(uncomplete_word, word):
-     
+
     # identify g as the last letter of a word if the two next to last letters are "in"
     if "g" not in transDict.values() and word[len(word) - 1] == "_" and word[len(word) - 3: len(word) - 1] == "in":
         encrypted_g = uncomplete_word[len(word) - 1]
@@ -201,14 +201,10 @@ for l in letters:
 #############################################
 
 
-#data_new = np.array(letters.values()).flatten()
-data_new = letters.values()
-
-sorted_list = sorted(data_new, key=lambda x: x.frequency, reverse=True)
+sorted_list = sorted(letters.values(), key=lambda x: x.frequency, reverse=True)
 sorted_list = sorted(sorted_list, key=lambda x: len(x.candidates))
 
 sorted_dict = {}
-
 for letter in sorted_list:
     sorted_dict[letter.letter] = letter
 

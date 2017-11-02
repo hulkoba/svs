@@ -2,9 +2,9 @@ INPUT_FILENAME = "2017_samples/sample.txt"
 OUPUT_FILENAME = "2017_samples/sample.txt_enc.txt"
 
 
-LETTER_FREQUENCY = [' ',
-                    'e', 't', 'a', 'o', 'i', 'n', 's', 'h', 'r', 'd', 'l', 'c', 'u', 'm', 'w',
-                    'f', 'g', 'y', 'p', 'b', 'v', 'k', 'j', 'x', 'q', 'z']
+# LETTER_FREQUENCY = [' ',
+#                     'e', 't', 'a', 'o', 'i', 'n', 's', 'h', 'r', 'd', 'l', 'c', 'u', 'm', 'w',
+#                     'f', 'g', 'y', 'p', 'b', 'v', 'k', 'j', 'x', 'q', 'z']
 
 FREQUENT_LETTERS = ['e', 't', 'a', 'o', 'i', 'n', 's', 'h', 'r', 'd', 'l', 'c', 'u', 'm', 'w',
                     'f', 'g', 'y', 'p', 'b', 'v', 'k', 'j', 'x', 'q', 'z']
