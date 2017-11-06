@@ -83,7 +83,16 @@ class Letter:
     def to_string(self):
         string = ""
         for cand in self.candidates:
-            string += str(cand) + " (if "  + " ) "
-        sorted_propabilaties = sort(self.candidates_probability)
+            string += "\n " + "" + "%.2f" % self.candidates_probability[cand] + "% \"" +  str(cand) + "\" if "
+            for dep in self.candidates[cand]:
+                string += dep + " = " + "/".join(self.candidates[cand][dep]) + " AND "
+            string = string[:len(string)-4]
+            string += " OR"
 
-        return "Letter: ", self.letter, " is ", self.solution, "or could be ", json.dumps(list(self.candidates))+" with probabilites "+json.dumps(sorted_propabilaties)
+        string = string[:len(string) - 2]
+        #sorted_propabilaties = sorted(self.candidates_probability.items(), key=operator.itemgetter(1))[:5]
+        #sorted_propabilaties = {k: '%.2f' % v for k, v in sorted_propabilaties}
+        #sorted_propabilaties = sorted(sorted_propabilaties.items(), key=operator.itemgetter(1))
+
+        return "Letter: \"" + self.letter + "\" is  \"" + self.solution + "\" or could be " + string + " \n"
+                                                                                                       #"probabilites: " + json.dumps(sorted_propabilaties)
