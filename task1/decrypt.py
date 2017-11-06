@@ -109,34 +109,6 @@ def assign_letter(letter_from, letter_to):
     letters_left.remove(letter_to)
     letters_brute_force.remove(letter_from)
 
-def fill_missing_letters(uncomplete_word, word):
-
-    # identify g as the last letter of a word if the two next to last letters are "in"
-    if "g" not in transDict.values() and word[len(word) - 1] == "_" and word[len(word) - 3: len(word) - 1] == "in":
-        encrypted_g = uncomplete_word[len(word) - 1]
-        assign_letter(encrypted_g, "g")
-
-    # apply newest dicttionary to word
-    word = decrypt(uncomplete_word, transDict)
-
-    # find suggestions
-    suggestions = enchant.suggest(word)
-
-    # only take words that are of the same length as our word
-    suggestions = filter(lambda k: len(k) == len(word), suggestions)
-    print "word " + word + " could be " + str(suggestions)
-
-    # go through all suggestions
-    for sugg in suggestions:
-
-        if validate_requirements(word, uncomplete_word, sugg):
-            for idc, char in enumerate(sugg):
-                encrypted_letter = uncomplete_word[idc]
-                if word[idc] == "_" and encrypted_letter in letters_brute_force and char in letters_left:
-                    assign_letter(encrypted_letter, char)
-            break
-
-
 
 ##########################################################################################
 ########################### go ###########################################################
@@ -273,7 +245,30 @@ print
 for idx, word in enumerate(words_with_missing_letters):
     encrypted_word = encryped_words_with_missing_letters[idx]
 
-    fill_missing_letters(encrypted_word, word)
+    # identify g as the last letter of a word if the two next to last letters are "in"
+    if "g" not in transDict.values() and word[len(word) - 1] == "_" and word[len(word) - 3: len(word) - 1] == "in":
+        encrypted_g = encrypted_word[len(word) - 1]
+        assign_letter(encrypted_g, "g")
+
+    # apply newest dicttionary to word
+    word = decrypt(encrypted_word, transDict)
+
+    # find suggestions
+    suggestions = enchant.suggest(word)
+
+    # only take words that are of the same length as our word
+    suggestions = filter(lambda k: len(k) == len(word), suggestions)
+    print "word " + word + " could be " + str(suggestions)
+
+    # go through all suggestions
+    for sugg in suggestions:
+        if validate_requirements(word, encrypted_word, sugg):
+            for idc, char in enumerate(sugg):
+                encrypted_letter = encrypted_word[idc]
+                if word[idc] == "_" and encrypted_letter in letters_brute_force and char in letters_left:
+                    assign_letter(encrypted_letter, char)
+            break
+
 
 
 print
