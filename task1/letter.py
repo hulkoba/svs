@@ -78,7 +78,6 @@ class Letter:
         #print("searching " + key + "=" + str(value) + " in " + str(self.candidates))
         if key in self.candidates and value in self.candidates[key]:
             del self.candidates[key]
-            # assert len(self.candidates) > 0
             assert self.candidates
 
     def to_string(self):

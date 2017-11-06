@@ -172,17 +172,20 @@ for l in letters:
         letters[l].remove_candidate(cand)
 #############################################
 
+# wie oft kommt der Buchstabe vor?
+letter_frequency = sorted(letters.values(), key=lambda x: x.frequency, reverse=True)
 
-sorted_list = sorted(letters.values(), key=lambda x: x.frequency, reverse=True)
-sorted_list = sorted(sorted_list, key=lambda x: len(x.candidates))
+# Wie viele Kandidaten hat der Buchstabe?
+sorted_list = sorted(letter_frequency, key=lambda x: len(x.candidates))
 
 sorted_dict = {}
 for letter in sorted_list:
     sorted_dict[letter.letter] = letter
 
 
-a = filter(lambda k: len(k) <= 3, cipher_without_spaces)
-the = collections.Counter(a).most_common(1)[0][0]
+three_letter_words = get_words_with(3, cipher_without_spaces)
+# the is the most common word
+the = collections.Counter(three_letter_words).most_common(1)[0][0]
 
 for idx, c in enumerate(the):
     set_solution_for_letter(letters[c], "the"[idx])
