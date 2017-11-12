@@ -162,6 +162,9 @@ for w1 in one:
 ##########################################
 
 ##########################################
+# abhaengigkeiten wie 
+# c = l wenn w = l
+# loeschen
 for l in letters:
     cands_to_remove = []
     for cand in letters[l].candidates.keys():
