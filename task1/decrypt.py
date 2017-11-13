@@ -38,6 +38,9 @@ def make_dependencies(eng_words, word):
         letters.get(c).clean_candidates()
     for match in eng_words:
         for index, c in enumerate(word):
+            # if word is "asf" and possible match is "the":
+            # "a" can be "t" if:
+            # "s" is "h" and "f" is "e"
             character = letters.get(c)
             character.add_candidate(match[index])
             for dep_index, dep in enumerate(word):

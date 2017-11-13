@@ -25,62 +25,88 @@ print("2.1.2 ")
 print("Wie lange dauert die durchschnittliche, die minimale und die maximale Schluesselsuchzeit?")
 
 for length in keyLength:
-	print("------------------------------- \n")
-	print("Suchzeit bei einer Schluessellaenge von " + str(length) + " bit \n")
+    print("------------------------------- \n")
+    print("Suchzeit bei einer Schluessellaenge von " + str(length) + " bit \n")
 
-	maxTries = float(2 ** length)
-	avgTries = float(maxTries / 2)
+    maxTries = float(2 ** length)
+    avgTries = float(maxTries / 2)
 
-	maxSeconds = maxTries / float(keysPerSecond)
-	avgSeconds = avgTries / float(keysPerSecond)
-	minSeconds = float(1 / float(keysPerSecond))
+    maxSeconds = maxTries / float(keysPerSecond)
+    avgSeconds = avgTries / float(keysPerSecond)
+    minSeconds = float(1 / float(keysPerSecond))
 
-	print "Minimal: \n    1 Versuch."
-	print "    "+ '{:.10f}'.format(minSeconds) + "(= einem Bruchteil einer Sekunde)  Sekunden. \n"
+    print "Minimal: \n    1 Versuch."
+    print "    " + '{:.10f}'.format(minSeconds) + "(= einem Bruchteil einer Sekunde)  Sekunden. \n"
 
-	print "Durchschnittlich: \n    " + '{:.0f}'.format(avgTries) + " Versuche"
-	print "in  " + '{:.0f}'.format(avgSeconds) + " Sekunden."
-	print "in  " + '{:.0f}'.format(avgSeconds / 60) + " Minuten."
-	print "in  " + '{:.0f}'.format(avgSeconds / 60 / 60) + " Stunden."
-	print "in  " + '{:.0f}'.format(avgSeconds / 60 / 60 / 24) + " Tagen. \n"
-	
-	print "Maximal: \n    " + '{:.0f}'.format(maxTries) + " Versuche" 
-	print "in  " + '{:.0f}'.format(maxSeconds) + " Sekunden."
-	print "in  " + '{:.0f}'.format(maxSeconds / 60) + " Minuten."
-	print "in  " + '{:.0f}'.format(maxSeconds / 60 / 60) + " Stunden."
-	print "in  " + '{:.0f}'.format(maxSeconds / 60 / 60 / 24) + " Tagen. \n"
+    print "Durchschnittlich: \n    " + '{:.0f}'.format(avgTries) + " Versuche"
+    print "in  " + '{:.0f}'.format(avgSeconds) + " Sekunden."
+    print "in  " + '{:.0f}'.format(avgSeconds / 60) + " Minuten."
+    print "in  " + '{:.0f}'.format(avgSeconds / 60 / 60) + " Stunden."
+    print "in  " + '{:.0f}'.format(avgSeconds / 60 / 60 / 24) + " Tagen. \n"
 
-	print("2.2")
-	# Das mooresche Gesetz besagt,
-	# dass sich die Komplexitaet integrierter Schaltkreise mit minimalen Komponentenkosten
-	# regelmaessig verdoppelt;
-	# je nach Quelle werden 12 bis 24 Monate als Zeitraum genannt.
-	# meistens 18 Monate
+    print "Maximal: \n    " + '{:.0f}'.format(maxTries) + " Versuche"
+    print "in  " + '{:.0f}'.format(maxSeconds) + " Sekunden."
+    print "in  " + '{:.0f}'.format(maxSeconds / 60) + " Minuten."
+    print "in  " + '{:.0f}'.format(maxSeconds / 60 / 60) + " Stunden."
+    print "in  " + '{:.0f}'.format(maxSeconds / 60 / 60 / 24) + " Tagen. \n"
 
-	# N(t): power after years
-	# N0:   start power
-	# t:    years
+    print("2.2 (ausgehend von einmaliger Investition (1 Mrd)")
+    # Das mooresche Gesetz besagt,
+    # dass sich die Komplexitaet integrierter Schaltkreise mit minimalen Komponentenkosten
+    # regelmaessig verdoppelt;
+    # je nach Quelle werden 12 bis 24 Monate als Zeitraum genannt.
+    # meistens 18 Monate
 
-	# N(t) = N0 * 2^t
-	# t= ln(  N(t) / N0  )  /  ln(2)
+    # N(t): power after years
+    # N0:   start power
+    # t:    years
+    # N(t) = N0 * 2^t
+    # t= ln(  N(t) / N0  )  /  ln(2)
 
-	futureMoney = 1000000000
+    # http://www.mathe-paradies.de/mathe/gleichungsloeser/index.htm
+    # A = B * 2^X
 
-	# 1 Mrd / (50 + 50)
-	futureMaxAsics = float(futureMoney / costPerAsic)
+    futureMoney = 1000000000
 
-	#unit: keys per second
-	requieredKeysPerSecond = maxTries / float(60*60*24) # 24h
+    # 1 Mrd / (50 + 50)
+    maxAsics = float(futureMoney / costPerAsic)
 
-	# N(t) = N0 * 2^t
-	requieredASICs = requieredKeysPerSecond / futureMaxAsics
+    keysPerDay = ASICs * maxAsics * float(60 * 60 * 24)
 
-	# t= ln(  N(t) / N0  )  /  ln(2)
-	requieredYears = math.log(requieredASICs/ASICs) / math.log(2)
+    # unit: keys per second
+    days = avgTries / keysPerDay  # 24h
 
-	if requieredYears <= 0:
-		print "hamwaschon"
-	else: 
-		print("In " + str(format(requieredYears, '.2f')) +
-			" Jahren kann laut Moore's Law eine Maschine gebaut werden, die in 24h einen " + str(length) +
-			" bit grossen Schluessel findet.")
+    print("days=" + str(days))
+    print("keysPerDay=" + str(keysPerDay))
+
+    years = 0
+
+    asictmp = ASICs
+    while days > 1:
+        years = years + 1.5
+        asictmp = asictmp * 2
+        keysPerDay = asictmp * maxAsics * float(60 * 60 * 24)
+        days = avgTries / keysPerDay
+
+    print("years=" + str(years))
+
+    futureMoney = 1000000000
+
+		# 1 Mrd / (50 + 50)
+    futureMaxAsics = float(futureMoney / costPerAsic)
+
+		#unit: keys per second
+    requieredKeysPerSecond = maxTries / float(60*60*24) # 24h
+
+		# N(t) = N0 * 2^t
+    requieredASICs = requieredKeysPerSecond / futureMaxAsics
+
+		# t= ln(  N(t) / N0  )  /  ln(2)
+    requieredYears = math.log(requieredASICs/ASICs) / math.log(2)
+
+    if requieredYears <= 0:
+		  print "hamwaschon"
+    else: 
+		  print("In " + str(format(requieredYears, '.2f')) +
+			  " Jahren kann laut Moore's Law eine Maschine gebaut werden, die in 24h einen " + str(length) +
+				" bit grossen Schluessel findet.")
