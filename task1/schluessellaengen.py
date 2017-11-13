@@ -39,10 +39,16 @@ for length in keyLength:
 	print "    "+ '{:.10f}'.format(minSeconds) + "(= einem Bruchteil einer Sekunde)  Sekunden. \n"
 
 	print "Durchschnittlich: \n    " + '{:.0f}'.format(avgTries) + " Versuche"
-	print "in  " + '{:.0f}'.format(avgSeconds) + " Sekunden. \n"
+	print "in  " + '{:.0f}'.format(avgSeconds) + " Sekunden."
+	print "in  " + '{:.0f}'.format(avgSeconds * 60) + " Minuten."
+	print "in  " + '{:.0f}'.format(avgSeconds * 60 * 60) + " Stunden."
+	print "in  " + '{:.0f}'.format(avgSeconds * 60 * 60 * 24) + " Tagen. \n"
 	
 	print "Maximal: \n    " + '{:.0f}'.format(maxTries) + " Versuche" 
-	print "in  " + '{:.0f}'.format(maxSeconds) + " Sekunden. \n"
+	print "in  " + '{:.0f}'.format(maxSeconds) + " Sekunden."
+	print "in  " + '{:.0f}'.format(maxSeconds * 60) + " Minuten."
+	print "in  " + '{:.0f}'.format(maxSeconds * 60 * 60) + " Stunden."
+	print "in  " + '{:.0f}'.format(maxSeconds * 60 * 60 * 24) + " Tagen. \n"
 
 	print("2.2")
 	# Das mooresche Gesetz besagt,
