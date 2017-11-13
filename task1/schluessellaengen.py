@@ -1,22 +1,25 @@
 import math
 
-keyLength = [40, 56, 64, 112, 128]
+keyLength = [40, 56, 64, 112, 128] # bit
 
-#unit: keys per second
+#unit: check 5*10 keys per second
 ASICs = 5 * 10 ** 8
 
+# 1 mio per year
 money = 1000000
 
+# 50 euro per asic, 50 euro per integration
 costPerAsic = 50 + 50
 
-maxAsics = float(money / costPerAsic)
 
+maxAsics = money / costPerAsic
 #unit: keys per secons
+# 5 * 10^8 * (1 mio / 100)
 keysPerSecond = ASICs * maxAsics
 
 print("2.1.1 ")
-print(str(maxAsics) + " Einheiten koennen mit dem zur Verfuegung stehendem Etat patallel betrieben werden. \n")
-
+print(str(maxAsics) + " Einheiten koennen mit dem zur Verfuegung stehendem Etat parallel betrieben werden. \n")
+print
 
 print("2.1.2 ")
 print("Wie lange dauert die durchschnittliche, die minimale und die maximale Schluesselsuchzeit?")
@@ -24,31 +27,24 @@ print("Wie lange dauert die durchschnittliche, die minimale und die maximale Sch
 for length in keyLength:
 	print("------------------------------- \n")
 	print("Suchzeit bei einer Schluessellaenge von " + str(length) + " bit \n")
-	print("Mindestens 1 Versuch.")
-
 
 	maxTries = float(2 ** length)
 	avgTries = float(maxTries / 2)
 
 	maxSeconds = maxTries / float(keysPerSecond)
 	avgSeconds = avgTries / float(keysPerSecond)
+	minSeconds = float(1 / float(keysPerSecond))
 
-	print("Durchschnittlich " + str(avgTries) + " Versuche in " + avgSeconds)
-	print("Maximal " + str(maxTries) + " Versuche in " + maxSeconds)
+	print "Minimal: \n    1 Versuch."
+	print "    "+ '{:.10f}'.format(minSeconds) + "(= einem Bruchteil einer Sekunde)  Sekunden. \n"
 
-	print("\n")
-
+	print "Durchschnittlich: \n    " + '{:.0f}'.format(avgTries) + " Versuche"
+	print "in  " + '{:.0f}'.format(avgSeconds) + " Sekunden. \n"
+	
+	print "Maximal: \n    " + '{:.0f}'.format(maxTries) + " Versuche" 
+	print "in  " + '{:.0f}'.format(maxSeconds) + " Sekunden. \n"
 
 	print("2.2")
-	futureMoney = 1000000000
-	maxAsics = float(futureMoney / float(costPerAsic))
-
-	#unit: keys per second
-	requieredKeysPerSecond = avgTries / float(60*60*24)
-	#unit: keys per second
-	requieredASICs = requieredKeysPerSecond / maxAsics
-
-
 	# Das mooresche Gesetz besagt,
 	# dass sich die Komplexitaet integrierter Schaltkreise mit minimalen Komponentenkosten
 	# regelmaessig verdoppelt;
@@ -64,11 +60,20 @@ for length in keyLength:
 	#http://www.mathe-paradies.de/mathe/gleichungsloeser/index.htm
 	#A = B * 2^X
 
+	futureMoney = 1000000000
+
+	# 1 Mrd / (50 + 50)
+	maxAsics = float(futureMoney / costPerAsic)
+
+	#unit: keys per second
+	requieredKeysPerSecond = avgTries / float(60*60*24) # 24h
+	#unit: keys per second
+	requieredASICs = requieredKeysPerSecond / maxAsics
 	requieredYears = math.log(requieredASICs/ASICs) / math.log(2)
 
 	if requieredYears <= 0:
-		print("Hamwaschon!")
-	else:
+		print "hamwaschon"
+	else: 
 		print("In " + str(format(requieredYears, '.2f')) +
-			" kann laut Moore's Law eine Maschine gebaut werden, die in 24h einen " + str(length) +
+			" Jahren kann laut Moore's Law eine Maschine gebaut werden, die in 24h einen " + str(length) +
 			" bit grossen Schluessel findet.")
