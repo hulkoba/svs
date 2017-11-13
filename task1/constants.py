@@ -1,7 +1,7 @@
-#INPUT_FILENAME = "2017_samples/sample.txt"
-INPUT_FILENAME = "2017_samples/a.txt"
-OUPUT_FILENAME = "2017_samples/a_enc.txt"
-#OUPUT_FILENAME = "2017_samples/sample.txt_enc.txt"
+INPUT_FILENAME = "2017_samples/sample.txt"
+#INPUT_FILENAME = "2017_samples/a.txt"
+#OUPUT_FILENAME = "2017_samples/a_enc.txt"
+OUPUT_FILENAME = "2017_samples/sample.txt_enc.txt"
 
 FREQUENT_LETTERS = ['e', 't', 'a', 'o', 'i', 'n', 's', 'h', 'r', 'd', 'l', 'c', 'u', 'm', 'w',
                     'f', 'g', 'y', 'p', 'b', 'v', 'k', 'j', 'x', 'q', 'z']
