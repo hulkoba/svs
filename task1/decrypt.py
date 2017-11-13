@@ -161,6 +161,10 @@ for w1 in one:
     make_dependencies(ONE_LETTER_WORDS, w1)
 ##########################################
 
+
+for entry in letters.values():
+    print entry.to_string()
+
 ##########################################
 # abhaengigkeiten wie 
 # c = l wenn w = l
@@ -171,6 +175,7 @@ for l in letters:
         for dep in letters[l].candidates[cand].keys():
             if letters[l].candidates[cand][dep] == set(cand):
                 cands_to_remove.append(cand)
+
     for cand in cands_to_remove:
         letters[l].remove_candidate(cand)
 #############################################
