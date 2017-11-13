@@ -40,15 +40,15 @@ for length in keyLength:
 
 	print "Durchschnittlich: \n    " + '{:.0f}'.format(avgTries) + " Versuche"
 	print "in  " + '{:.0f}'.format(avgSeconds) + " Sekunden."
-	print "in  " + '{:.0f}'.format(avgSeconds * 60) + " Minuten."
-	print "in  " + '{:.0f}'.format(avgSeconds * 60 * 60) + " Stunden."
-	print "in  " + '{:.0f}'.format(avgSeconds * 60 * 60 * 24) + " Tagen. \n"
+	print "in  " + '{:.0f}'.format(avgSeconds / 60) + " Minuten."
+	print "in  " + '{:.0f}'.format(avgSeconds / 60 / 60) + " Stunden."
+	print "in  " + '{:.0f}'.format(avgSeconds / 60 / 60 / 24) + " Tagen. \n"
 	
 	print "Maximal: \n    " + '{:.0f}'.format(maxTries) + " Versuche" 
 	print "in  " + '{:.0f}'.format(maxSeconds) + " Sekunden."
-	print "in  " + '{:.0f}'.format(maxSeconds * 60) + " Minuten."
-	print "in  " + '{:.0f}'.format(maxSeconds * 60 * 60) + " Stunden."
-	print "in  " + '{:.0f}'.format(maxSeconds * 60 * 60 * 24) + " Tagen. \n"
+	print "in  " + '{:.0f}'.format(maxSeconds / 60) + " Minuten."
+	print "in  " + '{:.0f}'.format(maxSeconds / 60 / 60) + " Stunden."
+	print "in  " + '{:.0f}'.format(maxSeconds / 60 / 60 / 24) + " Tagen. \n"
 
 	print("2.2")
 	# Das mooresche Gesetz besagt,
@@ -60,21 +60,22 @@ for length in keyLength:
 	# N(t): power after years
 	# N0:   start power
 	# t:    years
+
 	# N(t) = N0 * 2^t
 	# t= ln(  N(t) / N0  )  /  ln(2)
-
-	#http://www.mathe-paradies.de/mathe/gleichungsloeser/index.htm
-	#A = B * 2^X
 
 	futureMoney = 1000000000
 
 	# 1 Mrd / (50 + 50)
-	maxAsics = float(futureMoney / costPerAsic)
+	futureMaxAsics = float(futureMoney / costPerAsic)
 
 	#unit: keys per second
-	requieredKeysPerSecond = avgTries / float(60*60*24) # 24h
-	#unit: keys per second
-	requieredASICs = requieredKeysPerSecond / maxAsics
+	requieredKeysPerSecond = maxTries / float(60*60*24) # 24h
+
+	# N(t) = N0 * 2^t
+	requieredASICs = requieredKeysPerSecond / futureMaxAsics
+
+	# t= ln(  N(t) / N0  )  /  ln(2)
 	requieredYears = math.log(requieredASICs/ASICs) / math.log(2)
 
 	if requieredYears <= 0:
