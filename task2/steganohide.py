@@ -1,10 +1,7 @@
 # needed for parameters
 import sys
 
-# pillow
-from PIL import Image
-
-from utils import getBytesFromText
+from utils import getBytesFromText, getPixels, setSecretImage, getSize
 
 
 arguments = sys.argv
@@ -13,33 +10,34 @@ arguments = ["text.txt", "bild.bmp"]
 
 
 # text.txt
-INPUT_TEXT = arguments[0];
-
+INPUT_TEXT = arguments[0]
 # bild.bmp
 INPUT_IMAGE = arguments[1]
-
 # bild.bmp.ste
 OUTPUT = arguments[1] + ".ste.bmp"
 
-def getPixels(imagename):
-	image = Image.open(imagename)
-	return list(image.getdata())
+def storeContentInImage(pixel, content):
+	# we need enough space
+	# TODO: offset?
+	if len(content) > len(pixel)*3:
+		raise RuntimeError
+
+
 
 
 def main():
-	print INPUT_IMAGE
-	print INPUT_TEXT
-
 	# get the content to write
 	content = getBytesFromText(arguments[0])
-	print content
-
 
 	# get the pixels from image
+	# [(r,g,b)]
 	pixel = getPixels(INPUT_IMAGE)
 
 	# store the content in the pixels
-	# storeByteArrayInLowestBitOfByteTripelArray(content, pixels)
+	storeContentInImage(pixel, content)
+
+	# write a new, modified image
+	setSecretImage(getSize(INPUT_IMAGE), pixel, OUTPUT)
 
 
 

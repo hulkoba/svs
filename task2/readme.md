@@ -20,3 +20,4 @@ The shade of orange I chose has the hex value FF 7F 27 which has the binary valu
 
 #### We are using the Python Pillow Image Module
 [https://pillow.readthedocs.io/en/4.3.x/reference/Image.html](https://pillow.readthedocs.io/en/4.3.x/reference/Image.html)
+[a better documentated one](http://effbot.org/imagingbook/image.htm)

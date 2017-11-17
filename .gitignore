@@ -101,3 +101,5 @@ ENV/
 .mypy_cache/
 decrypted-plaintext.txt
 *.pyc
+*.ste.bmp
+*.ste
