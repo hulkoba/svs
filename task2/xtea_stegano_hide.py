@@ -2,7 +2,6 @@
 import sys
 from utils import *
 
-
 arguments = sys.argv
 # overwrite arguments to test the program without arguments
 arguments = ["resources/text.txt", "resources/bild.bmp"]
@@ -67,13 +66,39 @@ def createImage():
     setSecretImage(getSize(INPUT_IMAGE), newPixel, OUTPUT)
 
 
-def testImage():
-    # get the pixels from image [(r,g,b)]
-    steImage = getPixels(OUTPUT)
-    # read the content in the pixels
-    steContent = readContentFromImage(steImage)
-    write_string_to_file('resources/text.ste.txt', steContent)
+#def testImage():
+#    # get the pixels from image [(r,g,b)]
+#    steImage = getPixels(OUTPUT)
+#    # read the content in the pixels
+#    steContent = readContentFromImage(steImage)
+#    write_string_to_file('resources/text.ste.txt', steContent)
+
+def encode():
+    return ""
+
+
+def decode():
+    return ""
 
 
 if __name__ == "__main__":
-    main()
+
+    import argparse, sys
+
+    parser = argparse.ArgumentParser()
+
+    parser.add_argument('-e', help='Encode')
+    parser.add_argument('-d', help='Decode')
+    parser.add_argument('-m', help='Mac Passowrd')
+    parser.add_argument('-k', help='XTEA Passowrd')
+
+    args = parser.parse_args()
+
+    try:
+        if args.encode:
+            encode()
+        elif args.decode:
+            decode()
+    except AttributeError:
+        print(parser.format_help())
+
