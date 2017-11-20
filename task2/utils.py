@@ -27,12 +27,12 @@ def getBytesFromText(filename):
 
 #
 def setLastBit(pixelArray, index, bitValue):
-    print("pixelIndex = " + str(index))
+   # print("pixelIndex = " + str(index))
 
     # 0 1 2
     listIndex = int(index % 3)
 
-    print(str(listIndex))
+    # print(str(listIndex))
     assert listIndex in (0,1,2)
 
     #print("pixelArray = " + str(pixelArray))
@@ -51,7 +51,7 @@ def setLastBit(pixelArray, index, bitValue):
     shorterBinary = currentBinary[:7]
     lastBinary = currentBinary[7]
 
-    print("currentBinary = " + str(currentBinary))
+    #print("currentBinary = " + str(currentBinary))
     #print("lastBinary = " + str(lastBinary))
     #print("bitValue = " + str(bitValue))
     #print("shorterBinary = " + str(shorterBinary))
@@ -64,8 +64,8 @@ def setLastBit(pixelArray, index, bitValue):
     # convert Bits to Integer-Bytes
     newValue = int(currentBinary, 2)
 
-    print("oldValue = " + str(pixelList[listIndex]))
-    print("newValue = " + str(newValue))
+   # print("oldValue = " + str(pixelList[listIndex]))
+    # print("newValue = " + str(newValue))
     # set the new value
     pixelList[listIndex] = newValue
 
