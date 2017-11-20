@@ -5,7 +5,7 @@ from utils import *
 
 arguments = sys.argv
 # overwrite arguments to test the program without arguments
-arguments = ["text.txt", "bild.bmp"]
+arguments = ["resources/text.txt", "resources/bild.bmp"]
 # arguments = ["text.txt", "todd.bmp"]
 
 
@@ -72,7 +72,7 @@ def testImage():
     steImage = getPixels(OUTPUT)
     # read the content in the pixels
     steContent = readContentFromImage(steImage)
-    write_string_to_file('text.ste.txt', steContent)
+    write_string_to_file('resources/text.ste.txt', steContent)
 
 
 if __name__ == "__main__":
