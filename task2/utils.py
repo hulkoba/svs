@@ -27,13 +27,18 @@ def getBytesFromText(filename):
 
 #
 def setLastBit(pixelArray, index, bitValue):
-    pixelIndex = int(index / 3)
+    print("pixelIndex = " + str(index))
 
     # 0 1 2
     listIndex = int(index % 3)
 
+    print(str(listIndex))
+    assert listIndex in (0,1,2)
+
+    #print("pixelArray = " + str(pixelArray))
+
     # [1,2,3] [225,1,43]
-    pixelList = list(pixelArray[pixelIndex])
+    pixelList = list(pixelArray[index])
 
     # use (r) next (g) next (b)
     # [33, 22, 77]  use 33
@@ -46,28 +51,31 @@ def setLastBit(pixelArray, index, bitValue):
     shorterBinary = currentBinary[:7]
     lastBinary = currentBinary[7]
 
-    # print currentBinary
-    # print lastBinary
-    # print bitValue
-    # print shorterBinary
+    print("currentBinary = " + str(currentBinary))
+    #print("lastBinary = " + str(lastBinary))
+    #print("bitValue = " + str(bitValue))
+    #print("shorterBinary = " + str(shorterBinary))
 
-    # TODO: set the last bit
-    if int(lastBinary) != bitValue:
-        mask = 1 << 8
-       # currentBinary = currentBinary | mask
+    # set the last bit
+    currentBinary = str(shorterBinary) + str(bitValue)
 
     print "tada " + str(currentBinary)
 
     # convert Bits to Integer-Bytes
     newValue = int(currentBinary, 2)
 
-    print newValue
+    print("oldValue = " + str(pixelList[listIndex]))
+    print("newValue = " + str(newValue))
     # set the new value
     pixelList[listIndex] = newValue
 
-    pixelArray[pixelIndex] = tuple(pixelList)
+    pixelArray[index] = tuple(pixelList)
 
-    return pixelArray[pixelIndex * 3]
+    return pixelArray[index]
+
+#
+# def getLastBit(pixelArray, index, bitValue):
+
 
 
 #def readContentFromImage(pixelArray):

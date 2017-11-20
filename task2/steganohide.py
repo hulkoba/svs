@@ -7,6 +7,7 @@ from utils import *
 arguments = sys.argv
 # overwrite arguments to test the program without arguments
 arguments = ["text.txt", "bild.bmp"]
+# arguments = ["text.txt", "todd.bmp"]
 
 
 # text.txt
@@ -46,10 +47,33 @@ def storeContentInImage(pixel, content):
 
         for x in range(0, len(myBinary)):
             # strore each bit in Image
+            oldVal = pixel[byteIndex + x]
             newValue = setLastBit(pixel, byteIndex + x, int(myBinary[x]))
+            if newValue != oldVal:
+                print("replacing " + str(oldVal) + " with " + str(newValue))
             newPixel[byteIndex + x] = newValue
 
     return newPixel
+
+def readContentOfImage(imagePixels):
+    letters = ""
+
+    for pixel in imagePixels[::HEADER_OFFSET]:
+
+        print("pixel: " + pixel)
+
+        # write every bit of the current byte
+        #myBinary = getBinary(value, 8)
+
+        #pixel
+
+        #for x in range(0, len(myBinary)):
+            # strore each bit in Image
+            #newValue = setLastBit(pixel, byteIndex + x, int(myBinary[x]))
+            #newPixel[byteIndex + x] = newValue
+
+    return letters
+
 
 
 def main():
@@ -76,6 +100,7 @@ def createImage():
     # read the content in the pixels
     #steContent = readContentInImage(steImage)
     #write_string_to_file('text.ste.txt', steContent)
+
 
 
 if __name__ == "__main__":
