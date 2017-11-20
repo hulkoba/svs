@@ -67,12 +67,12 @@ def createImage():
     setSecretImage(getSize(INPUT_IMAGE), newPixel, OUTPUT)
 
 
-#def testImage():
+def testImage():
 #    # get the pixels from image [(r,g,b)]
-#    steImage = getPixels(OUTPUT)
+    steImage = getPixels(OUTPUT)
 #    # read the content in the pixels
-#    steContent = readContentFromImage(steImage)
-#    write_string_to_file('resources/text.ste.txt', steContent)
+    steContent = readContentFromImage(steImage)
+    write_string_to_file('resources/text.ste.txt', steContent)
 
 def encode(mac, xtea):
     return ""
