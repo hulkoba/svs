@@ -29,13 +29,6 @@ def storeContentInImage(pixel, content):
 
     newPixel = pixel
 
-    # write the length header to the image
-    # QUESTION: 8 or 16 or 32?
-    #binaryContentLen = getBinary(len(content), 16)
-    #print binaryContentLen
-    #for x in range(0, len(binaryContentLen)):
-        #setLastBit(pixel, x, int(binaryContentLen[x]))
-
     # iterate over all bits which should be written
     for idx, value in enumerate(content):
         # calculate the start position of the byte which should be written
@@ -54,26 +47,6 @@ def storeContentInImage(pixel, content):
             newPixel[byteIndex + x] = newValue
 
     return newPixel
-
-def readContentOfImage(imagePixels):
-    letters = ""
-
-    for pixel in imagePixels[::HEADER_OFFSET]:
-
-        print("pixel: " + pixel)
-
-        # write every bit of the current byte
-        #myBinary = getBinary(value, 8)
-
-        #pixel
-
-        #for x in range(0, len(myBinary)):
-            # strore each bit in Image
-            #newValue = setLastBit(pixel, byteIndex + x, int(myBinary[x]))
-            #newPixel[byteIndex + x] = newValue
-
-    return letters
-
 
 
 def main():
@@ -94,13 +67,12 @@ def createImage():
     setSecretImage(getSize(INPUT_IMAGE), newPixel, OUTPUT)
 
 
-#def testImage():
+def testImage():
     # get the pixels from image [(r,g,b)]
-    #steImage = getPixels(OUTPUT)
+    steImage = getPixels(OUTPUT)
     # read the content in the pixels
-    #steContent = readContentInImage(steImage)
-    #write_string_to_file('text.ste.txt', steContent)
-
+    steContent = readContentFromImage(steImage)
+    write_string_to_file('text.ste.txt', steContent)
 
 
 if __name__ == "__main__":

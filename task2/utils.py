@@ -77,9 +77,9 @@ def setLastBit(pixelArray, index, bitValue):
 # def getLastBit(pixelArray, index, bitValue):
 
 
-
-#def readContentFromImage(pixelArray):
-
+# pixelArray: [(r,g,b)]
+def readContentFromImage(pixelArray):
+    print pixelArray
 
 # Returns the contents of an image as a
 # sequence object containing pixel values.
