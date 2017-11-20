@@ -1,7 +1,6 @@
 # pillow
 from PIL import Image
 
-
 # params: Value=Integer-byte, length=8
 def getBinary(value):
     # bin(value) -> 0b110
@@ -73,10 +72,8 @@ def setLastBit(pixelArray, index, bitValue):
 
     return pixelArray[index]
 
-#
-# def getLastBit(pixelArray, index, bitValue):
 
-# stackoverflow convert-string...
+# stolen from https://stackoverflow.com/questions/10237926/convert-string-to-list-of-bits-and-viceversa
 def frombits(bits):
     chars = []
 
