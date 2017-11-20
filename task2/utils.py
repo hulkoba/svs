@@ -2,12 +2,12 @@
 from PIL import Image
 
 
-# params: Value=Integer-byte, length=8 or 16
-def getBinary(value, length):
+# params: Value=Integer-byte, length=8
+def getBinary(value):
     # bin(value) -> 0b110
     # bin(value)[2:] -> 110
     # zfill(8) -> 00000110
-    return bin(value)[2:].zfill(length)
+    return bin(value)[2:].zfill(8)
 
 
 def getBytesFromText(filename):
@@ -46,7 +46,7 @@ def setLastBit(pixelArray, index, bitValue):
     # [33, 255, 99] use 99 ...
     currentValue = pixelList[listIndex]
     #print currentValue
-    currentBinary = getBinary(currentValue, 8)
+    currentBinary = getBinary(currentValue)
 
     shorterBinary = currentBinary[:7]
     lastBinary = currentBinary[7]
@@ -76,10 +76,28 @@ def setLastBit(pixelArray, index, bitValue):
 #
 # def getLastBit(pixelArray, index, bitValue):
 
+# stackoverflow convert-string...
+def frombits(bits):
+    chars = []
+
+    for bit in range(len(bits) / 8):
+        byte = bits[bit * 8: (bit+1) * 8]
+        chars.append(chr(int(''.join([str(bit) for bit in byte]), 2)))
+
+    return ''.join(chars)
+
 
 # pixelArray: [(r,g,b)]
 def readContentFromImage(pixelArray):
-    print pixelArray
+    contentArray = []
+    #print pixelArray
+    for idx, pixel in enumerate(pixelArray):
+        binary = getBinary(pixel[idx % 3])
+        contentArray.append(binary[7])
+
+    content = frombits(contentArray)
+    return content
+
 
 # Returns the contents of an image as a
 # sequence object containing pixel values.

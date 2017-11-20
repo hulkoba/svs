@@ -36,7 +36,7 @@ def storeContentInImage(pixel, content):
         byteIndex = HEADER_OFFSET + BYTE_OFFSET * idx
 
         # write every bit of the current byte
-        myBinary = getBinary(value, 8)
+        myBinary = getBinary(value)
 
         for x in range(0, len(myBinary)):
             # strore each bit in Image
@@ -51,6 +51,7 @@ def storeContentInImage(pixel, content):
 
 def main():
     createImage()
+    testImage()
 
 
 def createImage():
