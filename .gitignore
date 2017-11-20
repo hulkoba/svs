@@ -103,3 +103,5 @@ decrypted-plaintext.txt
 *.pyc
 *.ste.bmp
 *.ste
+task1/.idea
+.idea
