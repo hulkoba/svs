@@ -1,7 +1,11 @@
 # pillow
 from PIL import Image
 
-# params: Value=Integer-byte, length=8
+HEADER_OFFSET = 16
+BYTE_OFFSET = 8
+
+
+# params: Value = Integer-byte
 def getBinary(value):
     # bin(value) -> 0b110
     # bin(value)[2:] -> 110
@@ -26,13 +30,11 @@ def getBytesFromText(filename):
 
 #
 def setLastBit(pixelArray, index, bitValue):
-   # print("pixelIndex = " + str(index))
 
     # 0 1 2
     listIndex = int(index % 3)
 
-    # print(str(listIndex))
-    assert listIndex in (0,1,2)
+    assert listIndex in (0, 1, 2)
 
     #print("pixelArray = " + str(pixelArray))
 
@@ -44,36 +46,51 @@ def setLastBit(pixelArray, index, bitValue):
     # [33, 44, 111] use 44
     # [33, 255, 99] use 99 ...
     currentValue = pixelList[listIndex]
-    #print currentValue
     currentBinary = getBinary(currentValue)
-
     shorterBinary = currentBinary[:7]
-    lastBinary = currentBinary[7]
-
-    #print("currentBinary = " + str(currentBinary))
-    #print("lastBinary = " + str(lastBinary))
-    #print("bitValue = " + str(bitValue))
-    #print("shorterBinary = " + str(shorterBinary))
 
     # set the last bit
     currentBinary = str(shorterBinary) + str(bitValue)
 
-    print "tada " + str(currentBinary)
-
     # convert Bits to Integer-Bytes
     newValue = int(currentBinary, 2)
 
-   # print("oldValue = " + str(pixelList[listIndex]))
-    # print("newValue = " + str(newValue))
     # set the new value
     pixelList[listIndex] = newValue
-
     pixelArray[index] = tuple(pixelList)
-
     return pixelArray[index]
 
 
-# stolen from https://stackoverflow.com/questions/10237926/convert-string-to-list-of-bits-and-viceversa
+def storeContentInImage(pixel, content):
+    # we need enough space
+    # TODO: offset?
+    if len(content) > len(pixel)*3:
+        raise RuntimeError
+
+    newPixel = pixel
+
+    # iterate over all bits which should be written
+    for idx, value in enumerate(content):
+        # calculate the start position of the byte which should be written
+        # e.g. 16, 32, 40, 48, 56, ...
+        byteIndex = HEADER_OFFSET + BYTE_OFFSET * idx
+
+        # write every bit of the current byte
+        myBinary = getBinary(value)
+
+        for x in range(0, len(myBinary)):
+            # strore each bit in Image
+            oldVal = pixel[byteIndex + x]
+            newValue = setLastBit(pixel, byteIndex + x, int(myBinary[x]))
+            if newValue != oldVal:
+                print("replacing " + str(oldVal) + " with " + str(newValue))
+            newPixel[byteIndex + x] = newValue
+
+    return newPixel
+
+
+# stolen from
+# https://stackoverflow.com/questions/10237926/convert-string-to-list-of-bits-and-viceversa
 def frombits(bits):
     chars = []
 
@@ -87,10 +104,10 @@ def frombits(bits):
 # pixelArray: [(r,g,b)]
 def readContentFromImage(pixelArray):
     contentArray = []
-    #print pixelArray
     for idx, pixel in enumerate(pixelArray):
-        binary = getBinary(pixel[idx % 3])
-        contentArray.append(binary[7])
+        if idx >= HEADER_OFFSET:
+            pixelBinary = getBinary(pixel[idx % 3])
+            contentArray.append(pixelBinary[7])
 
     content = frombits(contentArray)
     return content

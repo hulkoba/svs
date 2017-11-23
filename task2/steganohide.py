@@ -16,37 +16,6 @@ INPUT_IMAGE = arguments[1]
 # bild.bmp.ste
 OUTPUT = arguments[1] + ".ste.bmp"
 
-HEADER_OFFSET = 16
-BYTE_OFFSET = 8
-
-
-def storeContentInImage(pixel, content):
-    # we need enough space
-    # TODO: offset?
-    if len(content) > len(pixel)*3:
-        raise RuntimeError
-
-    newPixel = pixel
-
-    # iterate over all bits which should be written
-    for idx, value in enumerate(content):
-        # calculate the start position of the byte which should be written
-        # e.g. 16, 32, 40, 48, 56, ...
-        byteIndex = HEADER_OFFSET + BYTE_OFFSET * idx
-
-        # write every bit of the current byte
-        myBinary = getBinary(value)
-
-        for x in range(0, len(myBinary)):
-            # strore each bit in Image
-            oldVal = pixel[byteIndex + x]
-            newValue = setLastBit(pixel, byteIndex + x, int(myBinary[x]))
-            if newValue != oldVal:
-                print("replacing " + str(oldVal) + " with " + str(newValue))
-            newPixel[byteIndex + x] = newValue
-
-    return newPixel
-
 
 def main():
     createImage()
