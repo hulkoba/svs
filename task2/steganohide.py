@@ -24,7 +24,7 @@ def main():
 
 def createImage():
     # get the content to write
-    content = getBytesFromText(arguments[0])
+    content = getBytesFromText(INPUT_TEXT)
 
     # get the pixels from image [(r,g,b)]
     pixel = getPixels(INPUT_IMAGE)

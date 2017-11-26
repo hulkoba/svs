@@ -78,8 +78,8 @@ def storeContentInImage(pixel, content):
             # strore each bit in Image
             oldVal = pixel[byteIndex + x]
             newValue = setLastBit(pixel, byteIndex + x, int(myBinary[x]))
-            if newValue != oldVal:
-                print("replacing " + str(oldVal) + " with " + str(newValue))
+            # if newValue != oldVal:
+            #     print("replacing " + str(oldVal) + " with " + str(newValue))
             newPixel[byteIndex + x] = newValue
 
     return newPixel
@@ -101,6 +101,8 @@ def frombits(bits):
 
 # pixelArray: [(r,g,b)]
 def readContentFromImage(pixelArray):
+    print pixelArray[0]
+    print pixelArray[1]
     contentArray = []
     for idx, pixel in enumerate(pixelArray):
         if idx >= HEADER_OFFSET:
