@@ -33,12 +33,9 @@ def setLastBit(pixelArray, index, bitValue):
 
     # 0 1 2
     listIndex = int(index % 3)
-
     assert listIndex in (0, 1, 2)
 
-    #print("pixelArray = " + str(pixelArray))
-
-    # [1,2,3] [225,1,43]
+    # (1,2,3) -> [1,2,3]
     pixelList = list(pixelArray[index])
 
     # use (r) next (g) next (b)
@@ -63,7 +60,6 @@ def setLastBit(pixelArray, index, bitValue):
 
 def storeContentInImage(pixel, content):
     # we need enough space
-    # TODO: offset?
     if len(content) > len(pixel)*3:
         raise RuntimeError
 
@@ -96,7 +92,9 @@ def frombits(bits):
 
     for bit in range(len(bits) / 8):
         byte = bits[bit * 8: (bit+1) * 8]
-        chars.append(chr(int(''.join([str(bit) for bit in byte]), 2)))
+
+        letter = chr(int(''.join([str(bit) for bit in byte]), 2))
+        chars.append(letter)
 
     return ''.join(chars)
 
