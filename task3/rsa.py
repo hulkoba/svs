@@ -5,7 +5,7 @@ print "############## 3.1 #######################"
 p = 467
 g = 2
 
-def get_a(a):g
+def get_a(a):
     return (g**a) % p
 def get_b(b):
     return (g**b) % p
