@@ -7,7 +7,7 @@ Berechnen Sie für die folgenden Beispiele die beiden öffentlichen und den mitt
 ```
 - I. 		a = 2, b = 5
 - II.		a = 400, b = 134
-- III.	a = 228, b = 57
+- III.		a = 228, b = 57
 ```
 
 ### Aufgabe 3.2 RSA

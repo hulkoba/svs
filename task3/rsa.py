@@ -1,7 +1,64 @@
 print ''
-###############################################
-###########  3.2  #############################
-###############################################
+print "############## 3.1 #######################"
+# https://www.elektronik-kompendium.de/sites/net/1909031.htm
+
+p = 467
+g = 2
+
+def get_a(a):g
+    return (g**a) % p
+def get_b(b):
+    return (g**b) % p
+
+def get_k1(a, b):
+    return (b**a) % p
+
+def get_k2(a, b):
+    return (a**b) % p ## haha
+
+print "## 3.1.1"
+a = 2
+b = 5
+
+A = get_a(a)
+B = get_b(b)
+
+K1 = get_k1(a, B)
+K2 = get_k2(A, b)
+print "A = " + str(A)
+print "B = " + str(B)
+print "K1 = " + str(K1)
+print "K2 = " + str(K2)
+
+print ''
+print "## 3.1.2"
+a = 400
+b = 134
+
+A = get_a(a)
+B = get_b(b)
+K1 = get_k1(a, B)
+K2 = get_k2(A, b)
+print "A = " + str(A)
+print "B = " + str(B)
+print "K1 = " + str(K1)
+print "K2 = " + str(K2)
+
+print ''
+print "## 3.1.3"
+a = 228
+b = 57
+
+A = get_a(a)
+B = get_b(b)
+K1 = get_k1(a, B)
+K2 = get_k2(A, b)
+print "A = " + str(A)
+print "B = " + str(B)
+print "K1 = " + str(K1)
+print "K2 = " + str(K2)
+
+print ''
 print "############## 3.2 ###############################"
 # message = 9
 m = 9
@@ -33,10 +90,6 @@ d_von_x = e_von_m**d % n
 print "decrypted message d(x) = " + str(d_von_x)
 
 print ''
-
-###############################################
-###########  3.3  #############################
-###############################################
 print "############## 3.3 ###############################"
 
 p = 41
