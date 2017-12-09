@@ -58,59 +58,56 @@ def setLastBit(pixelArray, index, bitValue):
     return pixelArray[index]
 
 
-def storeContentInImage(pixel, content):
-    # we need enough space
-    if len(content) > len(pixel)*3:
-        raise RuntimeError
-
-    newPixel = pixel
-
-    # iterate over all bits which should be written
-    for idx, value in enumerate(content):
-        # calculate the start position of the byte which should be written
-        # e.g. 16, 32, 40, 48, 56, ...
-        byteIndex = HEADER_OFFSET + BYTE_OFFSET * idx
-
-        # write every bit of the current byte
-        myBinary = getBinary(value)
-
-        for x in range(0, len(myBinary)):
-            # strore each bit in Image
-            oldVal = pixel[byteIndex + x]
-            newValue = setLastBit(pixel, byteIndex + x, int(myBinary[x]))
-            # if newValue != oldVal:
-            #     print("replacing " + str(oldVal) + " with " + str(newValue))
-            newPixel[byteIndex + x] = newValue
-
-    return newPixel
-
-
 # stolen from
 # https://stackoverflow.com/questions/10237926/convert-string-to-list-of-bits-and-viceversa
-def frombits(bits):
+def frombits(bits, type):
     chars = []
-
     for bit in range(len(bits) / 8):
         byte = bits[bit * 8: (bit+1) * 8]
+        letter = int(''.join([str(bit) for bit in byte]), 2)
+        if type == 'char':
+            letter = chr(letter)
 
-        letter = chr(int(''.join([str(bit) for bit in byte]), 2))
         chars.append(letter)
 
-    return ''.join(chars)
+    if type == 'char':
+        return ''.join(chars)
+    else:
+        return int(''.join(map(str, chars)))
 
 
 # pixelArray: [(r,g,b)]
 def readContentFromImage(pixelArray):
-    print pixelArray[0]
-    print pixelArray[1]
     contentArray = []
+    lengtArray = []
+    for idx, pixel in enumerate(pixelArray):
+        if idx < HEADER_OFFSET:
+            length = getBinary(pixel[idx % 3])
+            lengtArray.append(length[7])
+
+    content_length = frombits(lengtArray, 'int')
+    content_length = content_length*8+HEADER_OFFSET
+
     for idx, pixel in enumerate(pixelArray):
         if idx >= HEADER_OFFSET:
-            pixelBinary = getBinary(pixel[idx % 3])
-            contentArray.append(pixelBinary[7])
+            if idx <= content_length:
+                pixelBinary = getBinary(pixel[idx % 3])
+                contentArray.append(pixelBinary[7])
 
-    content = frombits(contentArray)
+    content = frombits(contentArray, 'char')
     return content
+
+
+# returns an array of splitted content-length
+def get_content_len(content):
+    splitted_content_len = []
+    content_len = len(content)
+    # from 1245 -> [12, 45]
+    splitted_content_len.append(int(str(content_len)[:2]))
+    if content_len > 99:
+        splitted_content_len.append(int(str(content_len)[2:]))
+
+    return splitted_content_len
 
 
 # Returns the contents of an image as a

@@ -22,17 +22,56 @@ def main():
     testImage()
 
 
+def storeContentInImage(pixel, content, content_len):
+    # we need enough space
+    if len(content) > len(pixel)*3:
+        raise RuntimeError
+
+    newPixel = pixel
+
+    # store the conten-len in image
+    for idx, value in enumerate(content_len):
+        byteIndex = BYTE_OFFSET * idx
+        myBinary = getBinary(value)
+        for x in range(0, len(myBinary)):
+            newValue = setLastBit(pixel, byteIndex + x, int(myBinary[x]))
+            newPixel[byteIndex + x] = newValue
+
+    # iterate over all bits which should be written
+    for idx, value in enumerate(content):
+        # calculate the start position of the byte which should be written
+        # e.g. 16, 32, 40, 48, 56, ...
+        byteIndex = HEADER_OFFSET + BYTE_OFFSET * idx
+
+        # write every bit of the current byte
+        myBinary = getBinary(value)
+
+        for x in range(0, len(myBinary)):
+            # oldVal = pixel[byteIndex + x]
+            # strore each bit in Image
+            # pixelvalue, index to write, contentvalue
+            newValue = setLastBit(pixel, byteIndex + x, int(myBinary[x]))
+            # if newValue != oldVal:
+            #     print("replacing " + str(oldVal) + " with " + str(newValue))
+            newPixel[byteIndex + x] = newValue
+
+    return newPixel
+
+
 def createImage():
-    # get the content to write
+    # get the content to write = [integer bytes]
     content = getBytesFromText(INPUT_TEXT)
+
+    # get the text-len in bytes [12, 45]
+    text_len = get_content_len(content)
 
     # get the pixels from image [(r,g,b)]
     pixel = getPixels(INPUT_IMAGE)
 
     # store the content in the pixels
-    newPixel = storeContentInImage(pixel, content)
+    newPixel = storeContentInImage(pixel, content, text_len)
 
-    # write a new, modified image
+    # use Pillow to write a new, modified image
     setSecretImage(getSize(INPUT_IMAGE), newPixel, OUTPUT)
 
 

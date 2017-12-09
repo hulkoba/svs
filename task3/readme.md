@@ -22,6 +22,6 @@ Gegeben seien die Primzahlen *p = 41 und q = 17*.
 - Berechnen Sie den privaten Exponenten mit Hilfe des erweiterten euklidischen Algorithmus
 
 ### Aufgabe 3.4 Schlüsselaustausch Protokoll
-Programmieren Sie ein `naive_dh` Programm, welches einen generischen Diffie-Hellmann Schlüsselaustausch mittels `Bade64` kodierte E-Mails implementiert.
+Programmieren Sie ein `naive_dh` Programm, welches einen generischen Diffie-Hellmann Schlüsselaustausch mittels `Base64` kodierte E-Mails implementiert.
 Der so erzeugte gemeinsame geheime Schlüssel soll anschließend verwendet werden können, um verschlüsselte Nachrichten auszutauschen. Diese sollen mit Hilfe des XTEA-Algorithmus im CBC-Modus verschlüsselt werden.
 Die E-Mail-Konten dürfen mit Hilfe von Dateien in einfachen Ordnern auf ihrem lokalen Dateisystem simuliert werden.
