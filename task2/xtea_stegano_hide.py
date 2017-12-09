@@ -1,7 +1,6 @@
 # needed for parameters
 import sys
 import argparse
-import hashlib
 
 from utils import *
 
@@ -44,10 +43,11 @@ def storeContentInImage(pixel, content, content_len):
             newValue = setLastBit(pixel, byteIndex + x, int(myBinary[x]))
             newPixel[byteIndex + x] = newValue
 
+
     # iterate over all bits which should be written
     for idx, value in enumerate(content):
         # calculate the start position of the byte which should be written
-        # e.g. 16, 32, 40, 48, 56, ...
+        # e.g. 32, 40, 48, 56, ...
         byteIndex = HEADER_OFFSET + BYTE_OFFSET * idx
 
         # write every bit of the current byte
@@ -71,10 +71,6 @@ def createImage(mac_key):
 
     # get the content to write
     content = getBytesFromText(INPUT_TEXT)
-
-    # remember the length of mac password?
-    print len(mac_key)
-
     # store mac password in content
     content = mac_key + content
     # print content
@@ -86,24 +82,46 @@ def createImage(mac_key):
 
     # store the content in the pixels
     newPixel = storeContentInImage(pixel, content, text_len)
-
     # write a new, modified image
     setSecretImage(getSize(INPUT_IMAGE), newPixel, OUTPUT)
 
 
-def testImage():
+# pixelArray: [(r,g,b)]
+def readContentFromXTEAImage(pixelArray, hash_key):
+    contentArray = []
+    lengtArray = []
+
+    if hash_key == generate_key("mac_password"):
+        for idx, pixel in enumerate(pixelArray):
+            if idx < HEADER_OFFSET:
+                length = getBinary(pixel[idx % 3])
+                lengtArray.append(length[7])
+
+        content_length = frombits(lengtArray, 'int')
+        content_length = content_length*8+HEADER_OFFSET
+
+        for idx, pixel in enumerate(pixelArray):
+            if idx >= (HEADER_OFFSET + len(hash_key)):
+                if idx <= content_length:
+                    pixelBinary = getBinary(pixel[idx % 3])
+                    contentArray.append(pixelBinary[7])
+
+        content = frombits(contentArray, 'char')
+        return content
+
+
+def testImage(hash_key):
     # get the pixels from image [(r,g,b)]
     steImage = getPixels(OUTPUT)
     # read the content in the pixels
-    steContent = readContentFromImage(steImage)
+    steContent = readContentFromXTEAImage(steImage, hash_key)
+
     write_string_to_file('resources/text.txt_restored.txt', steContent)
 
 
-def encode(mac, xtea):
-    sha256 = hashlib.sha256()
-    sha256.update(mac)
-    hexSha = sha256.hexdigest()
-    hexlist = list(hexSha)
+def encode(mac_password, xtea):
+    hash_key = generate_key(mac_password)
+    hexlist = list(hash_key)
 
     # mac_list should have the same format like our content has
     # [integers]
@@ -115,8 +133,9 @@ def encode(mac, xtea):
     createImage(mac_list)
 
 
-def decode(mac, xtea):
-    # testImage()
+def decode(mac_password, xtea):
+    hash_key = generate_key(mac_password)
+    testImage(hash_key)
     return ""
 
 
@@ -128,8 +147,8 @@ if __name__ == "__main__":
     # parser.add_argument('-d', "--decode", help='Decode')
     # parser.add_argument('-m', "--mac", help='Mac Password')
     # parser.add_argument('-k', "--xtea", help='XTEA Password')
-    # parser.add_argument('-txt', "--txt", help='text to hide')
-    # parser.add_argument('-bmp', "--bmp", help='bnp file')
+    # parser.add_argument('text_path', nargs='?')
+    # parser.add_argument('image_path', nargs=1)
 
     # args = parser.parse_args()
 

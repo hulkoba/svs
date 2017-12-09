@@ -103,6 +103,7 @@ decrypted-plaintext.txt
 *.pyc
 *.sae*
 *.ste*
+*.txt_restored*
 
 
 task1/.idea

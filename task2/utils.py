@@ -1,7 +1,8 @@
 # pillow
 from PIL import Image
+import hashlib
 
-HEADER_OFFSET = 16
+HEADER_OFFSET = 32
 BYTE_OFFSET = 8
 
 
@@ -102,11 +103,9 @@ def readContentFromImage(pixelArray):
 def get_content_len(content):
     splitted_content_len = []
     content_len = len(content)
-    # from 1245 -> [12, 45]
-    splitted_content_len.append(int(str(content_len)[:2]))
-    if content_len > 99:
-        splitted_content_len.append(int(str(content_len)[2:]))
-
+    # from 1245 -> '1245' -> [1,2,4,5]
+    splitted_content_len = map(int, str(content_len))
+    print splitted_content_len
     return splitted_content_len
 
 
@@ -134,3 +133,9 @@ def write_string_to_file(filename, text):
     f = open(filename, 'w')
     f.write(text)
     f.close()
+
+
+def generate_key(mac_passwd):
+    sha256 = hashlib.sha256()
+    sha256.update(mac_passwd.encode('utf-8'))
+    return sha256.hexdigest()
