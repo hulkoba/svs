@@ -34,6 +34,8 @@ The letter D has the ASCII hex value 44 and binary value **01000100**.
 The shade of orange I chose has the hex value FF 7F 27 which has the binary value **11111111 01111111 00100111**. I mentioned before that we can alter these RGB numbers slightly. The specific method I chose was to set the last bit of each RGB byte to 1 or 0 based on the corresponding bit in the text data. This chart shows how each bit of the D is stored across three orange pixels (for a total of 9 bytes–one of which is not used).
 
 
-#### We are using the Python Pillow Image Module
+#### We use the Python Pillow Image Module
 [https://pillow.readthedocs.io/en/4.3.x/reference/Image.html](https://pillow.readthedocs.io/en/4.3.x/reference/Image.html)
+
+
 [a better documentated one](http://effbot.org/imagingbook/image.htm)
