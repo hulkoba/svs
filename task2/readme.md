@@ -11,6 +11,12 @@ Programmieren Sie ein (Python-)Skript, welches eine gegebene Datei in den Pixel 
 ### Aufgabe 2
 Implementieren Sie zusätzlich Authentifizierung und Verschlüsselung der einzubettenden Datei (in Python).
 Dies sollte durch die verwendung eines Message Authentication Codes (MAC) und den symmetrischen Verschlüsselungsalgorithmus XTEA geschehen.
+
+**Beispielaufruf**
+`xtea_stegano_hide.py -e`
+
+`xtea_stegano_hide.py -d`
+
 #### Hinweise
 Authentifizieren Sie die Daten mittels ‘HMAC-SHA256‘.
 - Hashen Sie hierzu das übergebene MAC-Passwort mittels SHA256.
