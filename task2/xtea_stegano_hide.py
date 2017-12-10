@@ -1,6 +1,7 @@
 # needed for parameters
 import sys
 import argparse
+import xtea as xtea
 
 from utils import *
 
@@ -65,7 +66,15 @@ def storeContentInImage(pixel, content, content_len):
     return newPixel
 
 
-def createImage(mac_key):
+
+def encode_xtea(password, content):
+    # todo generate IV of length 8
+    iv = "ABCDEFGH"
+    print("PW=" + str(generate_key(password)[:48]))
+    return xtea.crypt(generate_key(password)[48:], content, iv, mode='CFB')
+
+
+def createImage(mac_key, xtea_pass):
     # get the pixels from image [(r,g,b)]
     pixel = getPixels(INPUT_IMAGE)
 
@@ -73,21 +82,35 @@ def createImage(mac_key):
     content = getBytesFromText(INPUT_TEXT)
     # store mac password in content
     content = mac_key + content
-    # print content
+
+    contentText = ""
+    for zahl in content:
+        contentText += str(unichr(zahl))
+
+    print("cont " + str(contentText))
 
     # TODO: content = mac + encrypted content
 
+    encrypted = encode_xtea(password=xtea_pass, content=contentText)
+    print("encrypted " + str(encrypted))
+
+    number_string = []
+    for c in encrypted:
+        number_string.append(ord(c))
+
+    print("numstr = " + str(len(number_string)))
+
     # get the text-len in bytes [12, 45]
-    text_len = get_content_len(content)
+    text_len = get_content_len(number_string)
 
     # store the content in the pixels
-    newPixel = storeContentInImage(pixel, content, text_len)
+    newPixel = storeContentInImage(pixel, number_string, text_len)
     # write a new, modified image
     setSecretImage(getSize(INPUT_IMAGE), newPixel, OUTPUT)
 
 
 # pixelArray: [(r,g,b)]
-def readContentFromXTEAImage(pixelArray, hash_key):
+def readContentFromXTEAImage(pixelArray, hash_key, xtea_pw):
     contentArray = []
     lengtArray = []
 
@@ -98,23 +121,25 @@ def readContentFromXTEAImage(pixelArray, hash_key):
                 lengtArray.append(length[7])
 
         content_length = frombits(lengtArray, 'int')
+        print ("len = " + str(content_length))
         content_length = content_length*8+HEADER_OFFSET
 
         for idx, pixel in enumerate(pixelArray):
-            if idx >= (HEADER_OFFSET + len(hash_key)):
+            if idx >= (HEADER_OFFSET):
                 if idx <= content_length:
                     pixelBinary = getBinary(pixel[idx % 3])
                     contentArray.append(pixelBinary[7])
 
         content = frombits(contentArray, 'char')
-        return content
+        print("content=" + str(content))
+        return encode_xtea(xtea_pw, content)
 
 
-def testImage(hash_key):
+def testImage(hash_key, xtea_pw):
     # get the pixels from image [(r,g,b)]
     steImage = getPixels(OUTPUT)
     # read the content in the pixels
-    steContent = readContentFromXTEAImage(steImage, hash_key)
+    steContent = readContentFromXTEAImage(steImage, hash_key, xtea_pw)
 
     write_string_to_file('resources/text.txt_restored.txt', steContent)
 
@@ -130,12 +155,12 @@ def encode(mac_password, xtea):
         # convert hex to decimal Integer
         mac_list.append(int(x, 16))
 
-    createImage(mac_list)
+    createImage(mac_list, xtea)
 
 
-def decode(mac_password, xtea):
+def decode(mac_password, xtea_pw):
     hash_key = generate_key(mac_password)
-    testImage(hash_key)
+    testImage(hash_key, xtea_pw)
     return ""
 
 

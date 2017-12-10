@@ -1,34 +1,41 @@
-from utils import *
-from rsa import *
 import base64
 import sys
+import argparse
 
-mail_a_to_b = "./mails/mail_alice_to_bob.txt"
-mail2 = "./mails/mail_bob_to_alice.txt"
-alice = "alice"
-bob = "bob"
-
-def menu(is_logged_in=False, username=None, password=None):
-    if not is_logged_in:
-        username = raw_input("Welcome to pyMail! Please log in to send and receive E-Mails! \nUsername: ").lower()
-        assert (username in [alice, bob], "username should be " + alice + " or  " + bob)
-        password = raw_input("Please enter your password: ")
-
-    other_user = bob if username is alice else alice
-
-    choice = input("\nWhat do you want to do? \n"
-                   "1 --> Log out \n2 --> Send Mail to " + other_user + "\n3 --> check for new mail \n>")
-
-    if choice is 1:
-        username = None
-        menu(False)
-    if choice is 2:
-        menu(True, username, password)
-    if choice is 3:
-        menu(True, username, password)
+def send(password, recipient, message_sent):
+    print ("sending")
 
 
-menu()
+
+def receive(password):
+    print ("receiving")
+
+
+MODE_SEND = 'MODE_SEND'
+MODE_RECEIVE = 'MODE_RECEIVE'
+
+# https://docs.python.org/2/howto/argparse.html
+parser = argparse.ArgumentParser()
+parser.add_argument('-s', '--send', help='send an encrypted email', action='store_const', const=MODE_SEND)
+parser.add_argument('-r', '--receive', help='receive encrypted email', action='store_const', const=MODE_RECEIVE)
+parser.add_argument('-k', '--key', help='xtea password', required=True)
+parser.add_argument('-m', '--message', help='email and message', nargs=2)
+
+# parser.parse_args('c --foo a b'.split())
+args = parser.parse_args()
+s = args.send == MODE_SEND
+r = args.receive == MODE_RECEIVE
+k = args.key
+m_recipient = args.message[0]
+m_message = args.message[1]
+
+if send:
+    send(k, m_recipient, m_message)
+elif receive:
+    receive(k)
+
+
+
 '''
 mail_a_to_b_string = read_file_to_string(mail_a_to_b)
 
