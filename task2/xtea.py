@@ -28,11 +28,10 @@ def crypt(password, content, iv, rounds=32, mode='CFB'):
     assert (len(iv) == 8)
     assert (len(password) == 16)
 
-    # todo switch oder mode
+    # todo switch over mode
 
     generator = keygen(password, iv, rounds)
     ord_content = map(ord, content)
-
 
     xor = []
     # every time we use generator, encipher() is called and the result is yielded

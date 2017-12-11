@@ -31,7 +31,7 @@ def main():
 
 def storeContentInImage(pixel, content, content_len):
     # we need enough space
-    if len(content) > len(pixel)*3:
+    if len(content) > len(pixel) * 3:
         raise RuntimeError
 
     newPixel = pixel
@@ -43,7 +43,6 @@ def storeContentInImage(pixel, content, content_len):
         for x in range(0, len(myBinary)):
             newValue = setLastBit(pixel, byteIndex + x, int(myBinary[x]))
             newPixel[byteIndex + x] = newValue
-
 
     # iterate over all bits which should be written
     for idx, value in enumerate(content):
@@ -66,12 +65,13 @@ def storeContentInImage(pixel, content, content_len):
     return newPixel
 
 
-
 def encode_xtea(password, content):
     # todo generate IV of length 8
-    iv = "ABCDEFGH"
-    print("PW=" + str(generate_key(password)[:48]))
-    return xtea.crypt(generate_key(password)[48:], content, iv, mode='CFB')
+    passhash = generate_key(password)
+    iv = passhash[len(passhash) - 8:]
+    print("iv = " + iv)
+    print("pass = " + passhash)
+    return xtea.crypt(passhash[48:], content, iv, mode='CFB')
 
 
 def createImage(mac_key, xtea_pass):
@@ -114,25 +114,31 @@ def readContentFromXTEAImage(pixelArray, hash_key, xtea_pw):
     contentArray = []
     lengtArray = []
 
-    if hash_key == generate_key(arguments[4]):
+    # arguments[2] = given mac password
+    if hash_key == generate_key(arguments[2]):
         for idx, pixel in enumerate(pixelArray):
             if idx < HEADER_OFFSET:
                 length = getBinary(pixel[idx % 3])
                 lengtArray.append(length[7])
 
         content_length = frombits(lengtArray, 'int')
-        print ("len = " + str(content_length))
-        content_length = content_length*8+HEADER_OFFSET
+        print("len = " + str(content_length))
+        content_length = content_length * 8 + HEADER_OFFSET
 
         for idx, pixel in enumerate(pixelArray):
-            if idx >= (HEADER_OFFSET):
-                if idx <= content_length:
-                    pixelBinary = getBinary(pixel[idx % 3])
-                    contentArray.append(pixelBinary[7])
+            if HEADER_OFFSET <= idx <= content_length:
+                pixelBinary = getBinary(pixel[idx % 3])
+                contentArray.append(pixelBinary[7])
 
         content = frombits(contentArray, 'char')
-        print("content=" + str(content))
-        return encode_xtea(xtea_pw, content)
+
+        xtea_dec = encode_xtea(xtea_pw, content)
+        mac = xtea_dec[: len(hash_key)]
+        content = xtea_dec[len(hash_key):]
+
+        print("mac = " + str(mac))
+        print("content = " + str(content))
+        return content
     else:
         print "ERROR ERROR ERROR"
 
@@ -167,7 +173,6 @@ def decode(mac_password, xtea_pw):
 
 
 if __name__ == "__main__":
-
     # parser = argparse.ArgumentParser()
 
     # parser.add_argument('-e', "--encode", help='Encode')
