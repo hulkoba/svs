@@ -65,20 +65,11 @@ def storeContentInImage(pixel, content, content_len):
     return newPixel
 
 
-def encode_xtea(password, content):
+def run_xtea(password, content, mode_encode=True):
     passhash = generate_key(password)
     iv = passhash[len(passhash) - 8:]
     password = passhash[48:]
-    print(str(passhash) + " | " + str(iv) + " | " + str(password))
-    return xtea.crypt(password, content, iv, mode='CFB', enc=True)
-
-
-def decode_xtea(password, content):
-    passhash = generate_key(password)
-    iv = passhash[len(passhash) - 8:]
-    password = passhash[48:]
-    print(str(passhash) + " | " + str(iv) + " | " + str(password))
-    return xtea.crypt(password, content, iv, mode='CFB', enc=False)
+    return xtea.crypt(password, content, iv, mode='CFB', enc=mode_encode)
 
 
 def createImage(mac_key, xtea_pass):
@@ -89,16 +80,13 @@ def createImage(mac_key, xtea_pass):
     # get the content to write
     contentText = mac_key + stringtext
 
-    #print("contentText = " + contentText)
+    # XTEA encode
+    encrypted = run_xtea(xtea_pass, contentText, mode_encode=True)
 
-    encrypted = encode_xtea(password=xtea_pass, content=contentText)
-    print("encrypted " + str(encrypted))
-
+    # encrypted text in numbers
     number_string = []
     for c in encrypted:
         number_string.append(ord(c))
-
-    print("numstr = " + str(len(number_string)))
 
     # get the text-len in bytes [12, 45]
     text_len = get_content_len(number_string)
@@ -132,7 +120,9 @@ def readContentFromXTEAImage(pixelArray, hash_key, xtea_pw):
 
         content = frombits(contentArray, 'char')
 
-        xtea_dec = decode_xtea(xtea_pw, content)
+        # XTEA decode
+        xtea_dec = run_xtea(xtea_pw, content, mode_encode=False)
+
         mac = xtea_dec[: len(hash_key)]
         content = xtea_dec[len(hash_key):]
 
@@ -152,10 +142,9 @@ def testImage(hash_key, xtea_pw):
     write_string_to_file('resources/text.txt_restored.txt', steContent)
 
 
-def encode(mac_password, xtea):
+def encode(mac_password, xtea_pw):
     hash_key = generate_key(mac_password)
-
-    createImage(hash_key, xtea)
+    createImage(hash_key, xtea_pw)
 
 
 def decode(mac_password, xtea_pw):

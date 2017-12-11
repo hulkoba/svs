@@ -10,20 +10,16 @@ MASK = 0xffffffffL
 
 def xor_block_enc(password, iv, content, rounds):
     enc = encipher(password, content, rounds)
-    print("ENC " + str(password) + " | iv = " + str(iv) + " | content = " + str(content) + " | enc = " + str(enc))
-
     result = sxor(enc, iv)
-    print("    result = " + str(result))
+    # print("ENC " + str(password) + " | iv = " + str(iv) + " | content = " + str(content) + " | enc = " + str(enc) + " | result = " + str(result))
 
     return result
 
 
 def xor_block_dec(password, iv, content, rounds):
     unxor = sxor(content, iv)
-    print("DEC " + str(password) + " | iv = " + str(iv) + " | content = " + str(content) + " | dec = " + str(unxor))
-
     result = decipher(password, unxor, rounds)
-    print("    result = " + str(result))
+    # print("DEC " + str(password) + " | iv = " + str(iv) + " | content = " + str(content) + " | dec = " + str(unxor) + " | result = " + str(result))
 
     return result
 
@@ -42,20 +38,15 @@ def crypt(password, content, iv, rounds=32, mode='CFB', enc=True):
     assert (len(iv) == 8)
     assert (len(password) == 16)
 
-    # todo switch over mode
-
-    # todo feed new iv to next round?
+    # todo switch over different modes
 
     result = []
     for i in range(len(content) / 8):
         block = content[i * 8:i * 8 + 8]
         if enc:
-            print("iv =" + str(iv))
             iv = xor_block_enc(password, iv, block, rounds)
             result.append(iv)
         else:
-            print("iv =" + str(iv))
-
             result.append(xor_block_dec(password, iv, block, rounds))
             iv = block
 
