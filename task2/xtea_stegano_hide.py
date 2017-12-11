@@ -66,30 +66,30 @@ def storeContentInImage(pixel, content, content_len):
 
 
 def encode_xtea(password, content):
-    # todo generate IV of length 8
     passhash = generate_key(password)
     iv = passhash[len(passhash) - 8:]
-    print("iv = " + iv)
-    print("pass = " + passhash)
-    return xtea.crypt(passhash[48:], content, iv, mode='CFB')
+    password = passhash[48:]
+    print(str(passhash) + " | " + str(iv) + " | " + str(password))
+    return xtea.crypt(password, content, iv, mode='CFB', enc=True)
+
+
+def decode_xtea(password, content):
+    passhash = generate_key(password)
+    iv = passhash[len(passhash) - 8:]
+    password = passhash[48:]
+    print(str(passhash) + " | " + str(iv) + " | " + str(password))
+    return xtea.crypt(password, content, iv, mode='CFB', enc=False)
 
 
 def createImage(mac_key, xtea_pass):
     # get the pixels from image [(r,g,b)]
     pixel = getPixels(INPUT_IMAGE)
 
+    stringtext = getStringFromText(INPUT_TEXT)
     # get the content to write
-    content = getBytesFromText(INPUT_TEXT)
-    # store mac password in content
-    content = mac_key + content
+    contentText = mac_key + stringtext
 
-    contentText = ""
-    for zahl in content:
-        contentText += str(unichr(zahl))
-
-    print("cont " + str(contentText))
-
-    # TODO: content = mac + encrypted content
+    #print("contentText = " + contentText)
 
     encrypted = encode_xtea(password=xtea_pass, content=contentText)
     print("encrypted " + str(encrypted))
@@ -131,7 +131,7 @@ def readContentFromXTEAImage(pixelArray, hash_key, xtea_pw):
 
         content = frombits(contentArray, 'char')
 
-        xtea_dec = encode_xtea(xtea_pw, content)
+        xtea_dec = decode_xtea(xtea_pw, content)
         mac = xtea_dec[: len(hash_key)]
         content = xtea_dec[len(hash_key):]
 
@@ -151,16 +151,8 @@ def testImage(hash_key, xtea_pw):
 
 def encode(mac_password, xtea):
     hash_key = generate_key(mac_password)
-    hexlist = list(hash_key)
 
-    # mac_list should have the same format like our content has
-    # [integers]
-    mac_list = []
-    for x in hexlist:
-        # convert hex to decimal Integer
-        mac_list.append(int(x, 16))
-
-    createImage(mac_list, xtea)
+    createImage(hash_key, xtea)
 
 
 def decode(mac_password, xtea_pw):

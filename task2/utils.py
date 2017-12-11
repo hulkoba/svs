@@ -14,6 +14,11 @@ def getBinary(value):
     return bin(value)[2:].zfill(8)
 
 
+def getStringFromText(filename):
+    with open(filename, 'r') as myfile:
+        return myfile.read()
+
+
 def getBytesFromText(filename):
     bytes = []
 
@@ -31,7 +36,6 @@ def getBytesFromText(filename):
 
 #
 def setLastBit(pixelArray, index, bitValue):
-
     # 0 1 2
     listIndex = int(index % 3)
     assert listIndex in (0, 1, 2)
@@ -64,7 +68,7 @@ def setLastBit(pixelArray, index, bitValue):
 def frombits(bits, type):
     chars = []
     for bit in range(len(bits) / 8):
-        byte = bits[bit * 8: (bit+1) * 8]
+        byte = bits[bit * 8: (bit + 1) * 8]
         letter = int(''.join([str(bit) for bit in byte]), 2)
         if type == 'char':
             letter = chr(letter)
@@ -87,7 +91,7 @@ def readContentFromImage(pixelArray):
             lengtArray.append(length[7])
 
     content_length = frombits(lengtArray, 'int')
-    content_length = content_length*8+HEADER_OFFSET
+    content_length = content_length * 8 + HEADER_OFFSET
 
     for idx, pixel in enumerate(pixelArray):
         if idx >= HEADER_OFFSET:
@@ -139,3 +143,12 @@ def generate_key(mac_passwd):
     sha256 = hashlib.sha256()
     sha256.update(mac_passwd.encode('utf-8'))
     return sha256.hexdigest()
+
+
+def sxor(s1, s2):
+    # convert strings to a list of character pair tuples
+    # go through each tuple, converting them to ASCII code (ord)
+    # perform exclusive or on the ASCII code
+    # then convert the result back to ASCII (chr)
+    # merge the resulting array of characters as a string
+    return ''.join(chr(ord(a) ^ ord(b)) for a, b in zip(s1, s2))
