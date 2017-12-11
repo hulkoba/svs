@@ -114,7 +114,7 @@ def readContentFromXTEAImage(pixelArray, hash_key, xtea_pw):
     contentArray = []
     lengtArray = []
 
-    if hash_key == generate_key("mac_password"):
+    if hash_key == generate_key(arguments[4]):
         for idx, pixel in enumerate(pixelArray):
             if idx < HEADER_OFFSET:
                 length = getBinary(pixel[idx % 3])
@@ -133,6 +133,8 @@ def readContentFromXTEAImage(pixelArray, hash_key, xtea_pw):
         content = frombits(contentArray, 'char')
         print("content=" + str(content))
         return encode_xtea(xtea_pw, content)
+    else:
+        print "ERROR ERROR ERROR"
 
 
 def testImage(hash_key, xtea_pw):
