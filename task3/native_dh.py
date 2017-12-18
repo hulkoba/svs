@@ -1,9 +1,19 @@
 import base64
 import sys
 import argparse
+import xtea
+import utils
 
 def send(password, recipient, message_sent):
-    print ("sending")
+    passhash = utils.generate_key(password)
+    iv = passhash[len(passhash) - 8:]
+    password = passhash[48:]
+    encrypted = xtea.crypt(password, message_sent, iv)
+
+    base64_ecnoded_msg = base64.encodestring(encrypted)
+
+    print ("sending ... " + str(base64_ecnoded_msg))
+    utils.write_string_to_file(recipient+ "/mail.txt", base64_ecnoded_msg)
 
 
 
