@@ -4,21 +4,37 @@ import argparse
 import xtea
 import utils
 
+
 def send(password, recipient, message_sent):
-    passhash = utils.generate_key(password)
-    iv = passhash[len(passhash) - 8:]
-    password = passhash[48:]
-    encrypted = xtea.crypt(password, message_sent, iv)
+    print("sending... ")
+    print("text: " + str(message_sent))
+
+    encrypted = xtea_crypt(password, message_sent, True)
+    print("xtea: " + str(encrypted))
 
     base64_ecnoded_msg = base64.encodestring(encrypted)
+    print ("encrypted: " + str(base64_ecnoded_msg))
 
-    print ("sending ... " + str(base64_ecnoded_msg))
-    utils.write_string_to_file(recipient+ "/mail.txt", base64_ecnoded_msg)
-
+    utils.write_string_to_file("mail.txt", base64_ecnoded_msg)
 
 
 def receive(password):
-    print ("receiving")
+    print ("receiving... ")
+    text = utils.getStringFromText("mail.txt")
+    print("read: " + str(text))
+
+    base64_decoded_msg = base64.decodestring(text)
+    print("debase64d: " + str(base64_decoded_msg))
+
+    decrypted = xtea_crypt(password, base64_decoded_msg, False)
+    print("decrypted: " + str(decrypted))
+
+
+def xtea_crypt(password, text, enc):
+    passhash = utils.generate_key(password)
+    iv = passhash[len(passhash) - 8:]
+    password = passhash[48:]
+    return xtea.crypt(password, text, iv, enc=enc)
 
 
 MODE_SEND = 'MODE_SEND'
@@ -36,12 +52,12 @@ args = parser.parse_args()
 s = args.send == MODE_SEND
 r = args.receive == MODE_RECEIVE
 k = args.key
-m_recipient = args.message[0]
-m_message = args.message[1]
 
-if send:
+if s:
+    m_recipient = args.message[0]
+    m_message = args.message[1]
     send(k, m_recipient, m_message)
-elif receive:
+elif r:
     receive(k)
 
 

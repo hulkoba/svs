@@ -1,4 +1,5 @@
 import struct
+import math
 from utils import *
 
 # used http://code.activestate.com/recipes/496737/
