@@ -17,8 +17,8 @@ def get_k2(a, b):
     return (a**b) % p ## haha
 
 print "## 3.1.1"
-a = 2
-b = 5
+a = 83
+b = 833
 
 A = get_a(a)
 B = get_b(b)
