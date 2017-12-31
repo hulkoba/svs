@@ -6,26 +6,31 @@ import utils
 import diffiehellmann
 import os.path
 import random
+import datetime
+import time
 
 
 def send(user, password, recipient, message_sent):
     print("sending... ")
     print("text: " + str(message_sent))
 
-    if not os.path.exists(user.split("@")[0]):
-        os.makedirs(user.split("@")[0])
+    user_short = short_from_mail(user)
+    recipient_short = short_from_mail(recipient)
 
-    if not os.path.exists(recipient.split("@")[0]):
-        os.makedirs(recipient.split("@")[0])
+    if not os.path.exists(user_short):
+        os.makedirs(user_short)
+
+    if not os.path.exists(recipient_short):
+        os.makedirs(recipient_short)
 
     # if message_sent.startswith("DH"):
     #    print("WARNING: DH is not set up yet")
     #    key = password
     # else:
-    key = diffie_hellmann_key(user, recipient, password)
+    key = diffie_hellmann_key(user, recipient)
 
     if not key:
-        private_key_location = user.split("@")[0] + "/dh_private.txt"
+        private_key_location = user_short + "/" + user_short + "_private.txt"
         A = diffiehellmann.get_public_key(int(utils.getStringFromText(private_key_location)))
 
         message_sent = "DH:" + user + ":" + str(A)
@@ -38,27 +43,39 @@ def send(user, password, recipient, message_sent):
     print ("encrypted: " + str(base64_ecnoded_msg))
 
     # utils.write_string_to_file( recipient + "/mail" + base64_ecnoded_msg[:5] + ".txt", base64_ecnoded_msg)
-    utils.write_string_to_file(recipient.split("@")[0] + "/mail.txt", base64_ecnoded_msg)
+    timestamp = datetime.datetime.fromtimestamp(time.time()).strftime('%y-%m-%d_%H:%M:%S')
+    utils.write_string_to_file(recipient_short + "/mail_" + timestamp + ".txt", base64_ecnoded_msg)
+
+
+def short_from_mail(mail):
+    return mail.split("@")[0]
 
 
 def receive(user, password):
-    print ("receiving... ")
-    text = utils.getStringFromText(user.split("@")[0] + "/mail.txt")
-    print("read: " + str(text))
+    prefixed = [filename for filename in os.listdir(short_from_mail(user)) if filename.startswith("mail")]
 
-    text = base64.decodestring(text)
-    print("debase64d: " + str(text))
+    print "receiving... \nfound " + str(len(prefixed)) + " new mails"
 
-    # decrypted = xtea_crypt(password, base64_decoded_msg, False)
-    # print("decrypted: " + str(decrypted))
+    for mail in prefixed:
+        text = utils.getStringFromText(short_from_mail(user) + "/" + mail)
+        print("read: " + str(text))
 
-    if text.startswith("DH:"):
-        splitted = text.split(":")
-        account = splitted[1]
-        key = splitted[2]
-        print("found dh public key " + key + " for account " + account + " in new email. Reply to send own public key")
-        if save_dh(user, account, key):
-            send(user, password, account, "random text")
+        text = base64.decodestring(text)
+        print("received message: " + str(text))
+
+        # decrypted = xtea_crypt(password, base64_decoded_msg, False)
+        # print("decrypted: " + str(decrypted))
+
+        os.rename(short_from_mail(user) + "/" + mail, short_from_mail(user) + "/read_" + mail)
+
+        if text.startswith("DH:"):
+            splitted = text.split(":")
+            account = splitted[1]
+            key = splitted[2]
+            print "found new public key " + key + " for account " + account
+            if save_dh(user, account, key):
+                print "Replying own public key..."
+                send(user, password, account, "DH OK")
 
 
 def xtea_crypt(password, text, enc):
@@ -69,7 +86,7 @@ def xtea_crypt(password, text, enc):
 
 
 def save_dh(my_account, other_account, key):
-    location = my_account.split("@")[0] + "/" + other_account.split("@")[0] + "_public.txt"
+    location = short_from_mail(my_account) + "/" + short_from_mail(other_account) + "_public.txt"
     if os.path.isfile(location):
         dh = read_dh(my_account, other_account)
         print "public key for account " + other_account + " already known: " + str(dh)
@@ -80,33 +97,45 @@ def save_dh(my_account, other_account, key):
 
 
 def read_dh(my_account, other_account):
-    location = my_account.split("@")[0] + "/" + other_account.split("@")[0] + "_public.txt"
+    location = short_from_mail(my_account) + "/" + short_from_mail(other_account) + "_public.txt"
     if os.path.isfile(location):
         return int(utils.getStringFromText(location))
-    else:
-        print "no key found for account " + other_account
-        return None
+
+    return None
 
 
-def diffie_hellmann_key(account1, account2, password):
-    private_key_location = account1.split("@")[0] + "/dh_private.txt"
-    k_location = account1.split("@")[0] + "/dh_k.txt"
+def diffie_hellmann_key(account1, account2):
+    account1_short = short_from_mail(account1)
+    private_key_location = account1_short + "/" + account1_short + "_private.txt"
+    k_location = account1_short + "/" + account1_short + "_" + short_from_mail(account2) + "_sharedkey.txt"
+
+    B = read_dh(account1, account2)
 
     # setup
     if not os.path.isfile(private_key_location):
         private_key = random.randint(0, 1000)
         utils.write_string_to_file(private_key_location, str(private_key))
-        print("messaging is not set up. Please check mails in account " + account2 + " and reply with own public key")
-        return False
+        print("secure messaging is not set up. Please check mails in account " + account2 + " and reply with own public key")
 
-    if os.path.isfile(k_location):
-        K = int(utils.getStringFromText(k_location))
+        if B:
+            B = int(B)
+            write_dh_k(private_key, B, k_location)
+            return False
+
+    if not B:
+        return False
+    elif os.path.isfile(k_location):
+        return int(utils.getStringFromText(k_location))
     else:
         a = int(utils.getStringFromText(private_key_location))
-        B = int(read_dh(account1, account2))
-        K = diffiehellmann.get_k(a, B)
-        print "calculating K = " + str(K) + " from " + str(a) + " and " + str(B)
-        utils.write_string_to_file(k_location, str(K))
+        B = int(B)
+        return write_dh_k(a, B, k_location)
+
+
+def write_dh_k(a, B, location):
+    K = diffiehellmann.get_k(a, B)
+    print "calculating K = " + str(K) + " from " + str(a) + " and " + str(B)
+    utils.write_string_to_file(location, str(K))
     return K
 
 
