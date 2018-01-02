@@ -67,7 +67,7 @@ def storeContentInImage(pixel, content, content_len):
 
 def run_xtea(password, content, mode_encode=True):
     passhash = generate_key(password)
-    iv = passhash[len(passhash) - 8:]
+    iv = passhash[len(passhash) - BYTE_OFFSET:]
     password = passhash[48:]
     return xtea.crypt(password, content, iv, mode='CFB', enc=mode_encode)
 
@@ -75,20 +75,20 @@ def run_xtea(password, content, mode_encode=True):
 def createImage(mac_key, xtea_pass):
     # get the pixels from image [(r,g,b)]
     pixel = getPixels(INPUT_IMAGE)
-
     stringtext = getStringFromText(INPUT_TEXT)
+
     # get the content to write
     contentText = mac_key + stringtext
 
     # XTEA encode
-    encrypted = run_xtea(xtea_pass, contentText, mode_encode=True)
+    encrypted = run_xtea(xtea_pass, contentText)
 
     # encrypted text in numbers
     number_string = []
     for c in encrypted:
         number_string.append(ord(c))
 
-    # get the text-len in bytes [12, 45]
+    # get the text-len in bytes [1, 2, 4, 5]
     text_len = get_content_len(number_string)
 
     # store the content in the pixels
@@ -111,10 +111,11 @@ def readContentFromXTEAImage(pixelArray, hash_key, xtea_pw):
 
         content_length = frombits(lengtArray, 'int')
         print("len = " + str(content_length))
-        content_length = content_length * 8 + HEADER_OFFSET
+
+        content_length = content_length * BYTE_OFFSET + HEADER_OFFSET
 
         for idx, pixel in enumerate(pixelArray):
-            if HEADER_OFFSET <= idx <= content_length:
+            if HEADER_OFFSET <= idx < content_length:
                 pixelBinary = getBinary(pixel[idx % 3])
                 contentArray.append(pixelBinary[7])
 
@@ -123,14 +124,14 @@ def readContentFromXTEAImage(pixelArray, hash_key, xtea_pw):
         # XTEA decode
         xtea_dec = run_xtea(xtea_pw, content, mode_encode=False)
 
-        mac = xtea_dec[: len(hash_key)]
+        mac = xtea_dec[:len(hash_key)]
         content = xtea_dec[len(hash_key):]
 
         print("mac = " + str(mac))
         print("content = " + str(content))
         return content
     else:
-        print "ERROR ERROR ERROR"
+        print "ERROR ERROR ERROR!"
 
 
 def testImage(hash_key, xtea_pw):
