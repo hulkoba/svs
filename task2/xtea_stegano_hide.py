@@ -154,25 +154,4 @@ def decode(mac_password, xtea_pw):
 
 
 if __name__ == "__main__":
-    # parser = argparse.ArgumentParser()
-
-    # parser.add_argument('-e', "--encode", help='Encode')
-    # parser.add_argument('-d', "--decode", help='Decode')
-    # parser.add_argument('-m', "--mac", help='Mac Password')
-    # parser.add_argument('-k', "--xtea", help='XTEA Password')
-    # parser.add_argument('text_path', nargs='?')
-    # parser.add_argument('image_path', nargs=1)
-
-    # args = parser.parse_args()
-
-    # mac = args.mac
-    # xtea = args.xtea
-
-    # if arguments[1] == "-e":
-    #     encode(arguments[2], arguments[4])
-    # elif arguments[1] == "-d":
-    #     decode(arguments[2], arguments[4])
-    # else:
-    #     print(parser.format_help())
-
     main()

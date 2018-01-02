@@ -109,7 +109,6 @@ def get_content_len(content):
     content_len = len(content)
     # from 1245 -> '1245' -> [1,2,4,5]
     splitted_content_len = map(int, str(content_len))
-    print splitted_content_len
     return splitted_content_len
 
 
