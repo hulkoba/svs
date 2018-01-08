@@ -144,7 +144,6 @@ def generate_key(mac_passwd):
     sha256.update(mac_passwd.encode('utf-8'))
     return sha256.hexdigest()
 
-
 def sxor(s1, s2):
     # convert strings to a list of character pair tuples
     # go through each tuple, converting them to ASCII code (ord)

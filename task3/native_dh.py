@@ -35,16 +35,16 @@ def send(user, password, recipient, message_sent):
 
         message_sent = "DH:" + user + ":" + str(A)
         print("text changed to: " + str(message_sent))
-
-    # message_sent = xtea_crypt(key, message_sent, True)
-    # print("xtea: " + str(message_sent))
+    else:
+        message_sent = xtea_crypt(str(key), message_sent, True)
+        print("xtea: " + str(message_sent))
 
     base64_ecnoded_msg = base64.encodestring(message_sent)
     print ("encrypted: " + str(base64_ecnoded_msg))
 
     # utils.write_string_to_file( recipient + "/mail" + base64_ecnoded_msg[:5] + ".txt", base64_ecnoded_msg)
     timestamp = datetime.datetime.fromtimestamp(time.time()).strftime('%y-%m-%d_%H:%M:%S')
-    utils.write_string_to_file(recipient_short + "/mail_" + timestamp + ".txt", base64_ecnoded_msg)
+    utils.write_string_to_file(recipient_short + "/mail_" + user + "_" + timestamp + ".txt", base64_ecnoded_msg)
 
 
 def short_from_mail(mail):
@@ -60,11 +60,10 @@ def receive(user, password):
         text = utils.getStringFromText(short_from_mail(user) + "/" + mail)
         print("read: " + str(text))
 
+        account2 = mail.split("_")[1]
+
         text = base64.decodestring(text)
         print("received message: " + str(text))
-
-        # decrypted = xtea_crypt(password, base64_decoded_msg, False)
-        # print("decrypted: " + str(decrypted))
 
         os.rename(short_from_mail(user) + "/" + mail, short_from_mail(user) + "/read_" + mail)
 
@@ -76,6 +75,10 @@ def receive(user, password):
             if save_dh(user, account, key):
                 print "Replying own public key..."
                 send(user, password, account, "DH OK")
+        else:
+            key = diffie_hellmann_key(user, account2)
+            decrypted = xtea_crypt(str(key), text, False)
+            print("decrypted: " + str(decrypted))
 
 
 def xtea_crypt(password, text, enc):
