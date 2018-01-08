@@ -5,16 +5,22 @@ print "############## 3.1 #######################"
 p = 467
 g = 2
 
+
 def get_a(a):
     return (g**a) % p
+
+
 def get_b(b):
     return (g**b) % p
+
 
 def get_k1(a, b):
     return (b**a) % p
 
+
 def get_k2(a, b):
     return (a**b) % p ## haha
+
 
 print "## 3.1.1"
 a = 83
