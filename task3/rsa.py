@@ -5,14 +5,19 @@ print "############## 3.1 #######################"
 p = 467
 g = 2
 
+# A = g^^a mod p
 def get_a(a):
     return (g**a) % p
+
+# B = g^^b mod p
 def get_b(b):
     return (g**b) % p
 
+# K1 = B^a mod p
 def get_k1(a, b):
     return (b**a) % p
 
+# K2 = K1
 def get_k2(a, b):
     return (a**b) % p ## haha
 
