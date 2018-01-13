@@ -4,7 +4,7 @@ echo
 echo "======================================================="
 echo "Alice sends Bob the message \"Live long and prosper\""
 echo
-python2 native_dh.py -s -k pass -u "alice@mail.org" -m bob@mail.org "Live long and prosper"
+python2 native_dh.py -s -k pass -u "alice@mail.org" -m "bob@mail.org" "Live long and prosper"
 
 echo
 echo "======================================================="

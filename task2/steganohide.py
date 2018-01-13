@@ -5,7 +5,7 @@ from utils import *
 
 arguments = sys.argv
 # overwrite arguments to test the program without arguments
-arguments = ["resources/text.txt", "resources/bild.bmp"]
+arguments = ["resources/text.txt", "resources/todd.bmp"]
 # arguments = ["text.txt", "todd.bmp"]
 
 

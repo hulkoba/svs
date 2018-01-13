@@ -10,7 +10,15 @@ import datetime
 import time
 
 
-def send(user, password, recipient, message_sent):
+def send(user, recipient, message_sent):
+    """
+    sending mail
+    :param user: sender email address
+    :param password: with password
+    :param recipient: recipient email address
+    :param message_sent: content
+    :return: None
+    """
     print("sending... ")
     print("text: " + str(message_sent))
 
@@ -23,51 +31,64 @@ def send(user, password, recipient, message_sent):
     if not os.path.exists(recipient_short):
         os.makedirs(recipient_short)
 
-    # if message_sent.startswith("DH"):
-    #    print("WARNING: DH is not set up yet")
-    #    key = password
-    # else:
+    # try to calculate K with Diffie Hellmann
     key = diffie_hellmann_key(user, recipient)
 
+    # key could not be generated --> we don't have enough data to generate K
     if not key:
+        # private key location
         private_key_location = user_short + "/" + user_short + "_private.txt"
+        # generate public key
         A = diffiehellmann.get_public_key(int(utils.getStringFromText(private_key_location)))
 
+        # if Diffie-Hellmann is not initialized: we send our public key instead of the original message
         message_sent = "DH:" + user + ":" + str(A)
         print("text changed to: " + str(message_sent))
+    else:
+        # if we can calculate K, Diffie-Hellmann is initialized --> we can encrypt with XTEA
+        message_sent = xtea_crypt(str(key), message_sent, True)
+        print("xtea: " + str(message_sent))
 
-    # message_sent = xtea_crypt(key, message_sent, True)
-    # print("xtea: " + str(message_sent))
-
+    # Base64
     base64_ecnoded_msg = base64.encodestring(message_sent)
     print ("encrypted: " + str(base64_ecnoded_msg))
 
-    # utils.write_string_to_file( recipient + "/mail" + base64_ecnoded_msg[:5] + ".txt", base64_ecnoded_msg)
+    # add timestamp to each mail
     timestamp = datetime.datetime.fromtimestamp(time.time()).strftime('%y-%m-%d_%H:%M:%S')
-    utils.write_string_to_file(recipient_short + "/mail_" + timestamp + ".txt", base64_ecnoded_msg)
+    utils.write_string_to_file(recipient_short + "/mail_" + user + "_" + timestamp + ".txt", base64_ecnoded_msg)
 
 
 def short_from_mail(mail):
     return mail.split("@")[0]
 
 
-def receive(user, password):
+def receive(user):
+    """
+    receive all E-Mails
+    :param user: user email address
+    :param password: password
+    :return:
+    """
+    # all new mails (no "read"-prefix)
     prefixed = [filename for filename in os.listdir(short_from_mail(user)) if filename.startswith("mail")]
 
     print "receiving... \nfound " + str(len(prefixed)) + " new mails"
 
     for mail in prefixed:
+        # read mail content
         text = utils.getStringFromText(short_from_mail(user) + "/" + mail)
         print("read: " + str(text))
+
+        # sender account
+        account2 = mail.split("_")[1]
 
         text = base64.decodestring(text)
         print("received message: " + str(text))
 
-        # decrypted = xtea_crypt(password, base64_decoded_msg, False)
-        # print("decrypted: " + str(decrypted))
-
+        # rename to mark as read
         os.rename(short_from_mail(user) + "/" + mail, short_from_mail(user) + "/read_" + mail)
 
+        # if mail belogs to Diffie-Hellman exchange
         if text.startswith("DH:"):
             splitted = text.split(":")
             account = splitted[1]
@@ -75,7 +96,11 @@ def receive(user, password):
             print "found new public key " + key + " for account " + account
             if save_dh(user, account, key):
                 print "Replying own public key..."
-                send(user, password, account, "DH OK")
+                send(user, account, "DH OK")
+        else:
+            key = diffie_hellmann_key(user, account2)
+            decrypted = xtea_crypt(str(key), text, False)
+            print("decrypted: " + str(decrypted))
 
 
 def xtea_crypt(password, text, enc):
@@ -161,6 +186,6 @@ user = args.user
 if s:
     m_recipient = args.message[0]
     m_message = args.message[1]
-    send(user, k, m_recipient, m_message)
+    send(user, m_recipient, m_message)
 elif r:
-    receive(user, k)
+    receive(user)

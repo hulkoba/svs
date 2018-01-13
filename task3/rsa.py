@@ -21,6 +21,7 @@ def get_k1(a, b):
 def get_k2(a, b):
     return (a**b) % p ## haha
 
+
 print "## 3.1.1"
 a = 83
 b = 833
